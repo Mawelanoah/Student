@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Student Marketplace – Buy and sell textbooks, electronics, furniture and more with fellow TUT students. Safe, simple and made for campus life.">
+  <meta name="theme-color" content="#6D28D9">
+  <title>Student Marketplace | TUT Campus Buy & Sell</title>
+
+  <!-- Preconnect for faster image loading -->
+  <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- ========== HEADER ========== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo" aria-label="Student Marketplace home">
+        <span class="logo-icon" aria-hidden="true">SM</span>
+        <span>Student Marketplace</span>
+      </a>
+
+      <!-- Desktop navigation -->
+      <nav class="nav-desktop" aria-label="Main navigation">
+        <a href="index.html" class="active">Home</a>
+        <a href="marketplace.html">Browse</a>
+        <a href="how-it-works.html">How it works</a>
+        <a href="safety.html">Safety</a>
+      </nav>
+
+      <!-- Desktop search -->
+      <form class="header-search header-search-form" role="search" action="marketplace.html" method="get">
+        <svg class="header-search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input type="search" name="q" placeholder="Search textbooks, laptops..." aria-label="Search marketplace" autocomplete="off">
+      </form>
+
+      <div class="header-actions">
+        <a href="sell.html" class="btn btn-primary btn-sm">Sell an item</a>
+        <a href="login.html" class="btn btn-ghost btn-sm">Log in</a>
+
+        <!-- Mobile menu button -->
+        <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile navigation -->
+    <nav class="nav-mobile" id="mobile-nav" aria-label="Mobile navigation">
+      <a href="index.html" class="active">Home</a>
+      <a href="marketplace.html">Browse marketplace</a>
+      <a href="sell.html">Sell an item</a>
+      <a href="how-it-works.html">How it works</a>
+      <a href="safety.html">Safety tips</a>
+      <a href="about.html">About</a>
+      <a href="login.html" class="btn btn-secondary">Log in</a>
+      <a href="register.html" class="btn btn-primary">Create account</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ========== HERO ========== -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-badge">
+            <span aria-hidden="true">🎓</span>
+            Exclusive to TUT students
+          </div>
+          <h1>Buy & sell with <span>fellow students</span> at TUT</h1>
+          <p class="hero-text">
+            The simple, trusted marketplace for textbooks, laptops, furniture, clothes and everything else you need on campus.
+          </p>
+
+          <div class="hero-actions">
+            <a href="marketplace.html" class="btn btn-primary btn-lg">Browse marketplace</a>
+            <a href="sell.html" class="btn btn-secondary btn-lg">Sell an item</a>
+          </div>
+
+          <form class="hero-search hero-search-form" role="search" action="marketplace.html" method="get">
+            <input type="search" name="q" placeholder="What are you looking for?" aria-label="Search the marketplace" autocomplete="off">
+            <button type="submit" class="btn btn-primary">Search</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== CATEGORIES ========== -->
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Browse by category</h2>
+        <p class="section-subtitle">Find exactly what you need for student life</p>
+
+        <div class="category-grid" id="category-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FEATURED LISTINGS ========== -->
+    <section class="section" style="background: var(--color-surface);">
+      <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+          <div>
+            <h2 class="section-title" style="margin-bottom: 0.25rem;">Featured items</h2>
+            <p class="section-subtitle" style="margin-bottom: 0;">Hand-picked listings from TUT students</p>
+          </div>
+          <a href="marketplace.html" class="btn btn-outline btn-sm">View all</a>
+        </div>
+
+        <div class="product-grid" id="featured-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== RECENT LISTINGS ========== -->
+    <section class="section">
+      <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+          <div>
+            <h2 class="section-title" style="margin-bottom: 0.25rem;">Recently listed</h2>
+            <p class="section-subtitle" style="margin-bottom: 0;">Fresh items from the campus community</p>
+          </div>
+          <a href="marketplace.html" class="btn btn-outline btn-sm">Browse all</a>
+        </div>
+
+        <div class="product-grid" id="recent-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== HOW IT WORKS ========== -->
+    <section class="section" style="background: var(--color-surface);">
+      <div class="container">
+        <h2 class="section-title text-center">How it works</h2>
+        <p class="section-subtitle text-center">Buying and selling is simple and free</p>
+
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3>Browse or list an item</h3>
+              <p>Search for what you need or post something you no longer use. It only takes a minute.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3>Chat on WhatsApp</h3>
+              <p>Contact the seller directly via WhatsApp. Ask questions and arrange a convenient meetup.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3>Meet safely on campus</h3>
+              <p>Agree on a public place, inspect the item, and complete the exchange in person.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mt-4">
+          <a href="how-it-works.html" class="btn btn-outline">Learn more</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== SAFETY TEASER ========== -->
+    <section class="section">
+      <div class="container">
+        <div class="safety-banner">
+          <div>
+            <h3>Your safety comes first</h3>
+            <p>Always meet in public campus areas, never share banking details with strangers, and report anything suspicious. We take trust seriously.</p>
+          </div>
+          <a href="safety.html" class="btn btn-primary">Safety guidelines</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== CTA ========== -->
+    <section class="section" style="background: linear-gradient(135deg, #6D28D9 0%, #5B21B6 100%); color: white;">
+      <div class="container text-center">
+        <h2 class="section-title" style="color: white; margin-bottom: 0.75rem;">Have something to sell?</h2>
+        <p style="color: rgba(255,255,255,0.9); max-width: 480px; margin: 0 auto 1.5rem; font-size: 1.05rem;">
+          Turn unused textbooks, gadgets and room essentials into cash. Listing is free and takes less than two minutes.
+        </p>
+        <a href="sell.html" class="btn btn-lg" style="background: white; color: #6D28D9;">Sell an item now</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo">
+            <span class="logo-icon" aria-hidden="true">SM</span>
+            <span>Student Marketplace</span>
+          </a>
+          <p>A trusted place for TUT students to buy and sell with each other. Built for campus life.</p>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Explore</h4>
+          <ul class="footer-links">
+            <li><a href="marketplace.html">Browse marketplace</a></li>
+            <li><a href="sell.html">Sell an item</a></li>
+            <li><a href="how-it-works.html">How it works</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Support</h4>
+          <ul class="footer-links">
+            <li><a href="safety.html">Safety tips</a></li>
+            <li><a href="about.html">About us</a></li>
+            <li><a href="about.html#contact">Contact</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Account</h4>
+          <ul class="footer-links">
+            <li><a href="login.html">Log in</a></li>
+            <li><a href="register.html">Create account</a></li>
+            <li><a href="account.html">My listings</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 Student Marketplace. Built for Tshwane University of Technology students.</p>
+        <p>Phase 1 demo – sample data only. Real accounts & listings coming in Phase 2.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Render categories
+      const categoryGrid = document.getElementById("category-grid");
+      if (categoryGrid && window.CATEGORIES) {
+        categoryGrid.innerHTML = window.CATEGORIES.map(function (cat) {
+          return `
+            <a href="marketplace.html?category=${encodeURIComponent(cat.id)}" class="category-card">
+              <span class="category-icon" aria-hidden="true">${cat.icon}</span>
+              <span class="category-name">${window.escapeHtml(cat.name)}</span>
+            </a>
+          `;
+        }).join("");
+      }
+
+      // Render featured listings
+      const featuredGrid = document.getElementById("featured-grid");
+      if (featuredGrid && window.getFeaturedListings) {
+        const featured = window.getFeaturedListings();
+        featuredGrid.innerHTML = featured.map(window.renderProductCard).join("");
+      }
+
+      // Render recent listings
+      const recentGrid = document.getElementById("recent-grid");
+      if (recentGrid && window.getRecentListings) {
+        const recent = window.getRecentListings(8);
+        recentGrid.innerHTML = recent.map(window.renderProductCard).join("");
+      }
+    });
+  </script>
+</body>
+</html>
