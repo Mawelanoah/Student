@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product | Student Marketplace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .product-detail { display: grid; gap: 2rem; }
+    @media (min-width: 768px) { .product-detail { grid-template-columns: 1fr 1fr; } }
+    .product-gallery img { width: 100%; border-radius: var(--radius-lg); aspect-ratio: 1; object-fit: cover; background: var(--color-surface); }
+    .product-info h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .product-price { font-size: 1.75rem; font-weight: 700; color: var(--color-primary); margin: 1rem 0; }
+    .seller-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.25rem; margin-top: 1.5rem; }
+    .safety-note { background: var(--color-warning-bg); border: 1px solid #FDE68A; border-radius: var(--radius-md); padding: 1rem; margin-top: 1.5rem; font-size: 0.875rem; color: #92400E; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo"><span class="logo-icon">SM</span><span>Student Marketplace</span></a>
+      <nav class="nav-desktop"><a href="index.html">Home</a><a href="marketplace.html">Browse</a><a href="how-it-works.html">How it works</a><a href="safety.html">Safety</a></nav>
+      <div class="header-actions"><a href="sell.html" class="btn btn-primary btn-sm">Sell an item</a><a href="login.html" class="btn btn-ghost btn-sm">Log in</a>
+        <button class="menu-toggle" type="button" aria-label="Menu" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+    </div>
+    <nav class="nav-mobile" id="mobile-nav"><a href="index.html">Home</a><a href="marketplace.html">Browse</a><a href="sell.html">Sell</a><a href="safety.html">Safety</a><a href="login.html" class="btn btn-secondary">Log in</a></nav>
+  </header>
+  <main class="section"><div class="container">
+    <div class="demo-notice"><span>ℹ️</span><div><strong>Demo product</strong> — Sample data only. Contact is a preview.</div></div>
+    <div id="product-content"><p>Loading…</p></div>
+  </div></main>
+  <footer class="site-footer"><div class="container footer-bottom"><p>© 2026 Student Marketplace. Phase 1 demo.</p></div></footer>
+  <script src="js/data.js"></script><script src="js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const id = new URLSearchParams(location.search).get("id");
+      const listing = id ? getListingById(id) : null;
+      const container = document.getElementById("product-content");
+      if (!listing) {
+        container.innerHTML = '<div class="empty-state"><h3>Product not found</h3><p>This listing may have been removed.</p><a href="marketplace.html" class="btn btn-primary mt-4">Back to marketplace</a></div>';
+        return;
+      }
+      document.title = listing.title + " | Student Marketplace";
+      const cat = getCategoryById(listing.category);
+      const condition = getConditionLabel(listing.condition);
+      const waLink = buildWhatsAppLink(listing.whatsapp, "Hi, I’m interested in: " + listing.title);
+      container.innerHTML = `
+        <div class="product-detail">
+          <div class="product-gallery"><img src="${listing.images[0]}" alt="${escapeHtml(listing.title)}" data-fallback="https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=600&q=60"></div>
+          <div class="product-info">
+            <div class="product-card-meta" style="margin-bottom:0.5rem;"><span class="badge badge-condition">${escapeHtml(condition)}</span><span class="badge badge-featured">${escapeHtml(cat.name)}</span></div>
+            <h1>${escapeHtml(listing.title)}</h1>
+            <div class="product-price">${formatPrice(listing.price)}</div>
+            <p style="color:var(--color-text-secondary);margin-bottom:1rem;">${escapeHtml(listing.description)}</p>
+            <p style="font-size:0.875rem;color:var(--color-text-muted);">Posted ${formatDate(listing.datePosted)} · ${escapeHtml(listing.campus)}</p>
+            <div class="seller-card">
+              <h3 style="font-size:1rem;margin-bottom:0.5rem;">Seller (demo)</h3>
+              <p style="font-weight:600;">${escapeHtml(listing.sellerName)}</p>
+              <p style="font-size:0.875rem;color:var(--color-text-secondary);margin-bottom:1rem;">${escapeHtml(listing.campus)} · Demo vendor</p>
+              <a href="${waLink}" target="_blank" rel="noopener" class="btn btn-whatsapp btn-block">Contact via WhatsApp (demo)</a>
+              <p style="font-size:0.75rem;color:var(--color-text-muted);margin-top:0.5rem;">Fictional demo number. Real contact after Phase 2 verification.</p>
+            </div>
+            <div class="safety-note"><strong>Safety reminder:</strong> Meet in a public campus area, inspect before paying, never share OTPs. See <a href="safety.html">Safety tips</a>.</div>
+            <p style="margin-top:1.5rem;"><a href="marketplace.html" class="btn btn-outline">← Back to marketplace</a></p>
+          </div>
+        </div>`;
+    });
+  </script>
+</body>
+</html>
