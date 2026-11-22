@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wishlist | Student Marketplace</title>
+  <meta name="theme-color" content="#0F766E">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo"><span class="logo-icon">SM</span><span>Student Marketplace</span></a>
+      <nav class="nav-desktop"><a href="index.html">Home</a><a href="marketplace.html">Marketplace</a><a href="wishlist.html" class="active">Wishlist</a></nav>
+      <div class="header-actions"><a href="sell.html" class="btn btn-primary btn-sm">Sell</a>
+        <button class="menu-toggle" type="button" aria-label="Menu" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+      </div>
+    </div>
+    <nav class="nav-mobile" id="mobile-nav"><a href="index.html">Home</a><a href="marketplace.html">Marketplace</a><a href="wishlist.html" class="active">Wishlist</a></nav>
+  </header>
+  <main class="section">
+    <div class="container">
+      <h1 class="section-title">Your wishlist</h1>
+      <p class="section-subtitle">Saved on this device only — not linked to an account yet</p>
+      <div class="demo-notice"><span>ℹ️</span><div><strong>Local wishlist</strong> — Uses browser storage. Account sync comes in Phase 2.</div></div>
+      <div class="product-grid" id="wish-grid"></div>
+      <div class="empty-state hidden" id="wish-empty"><h3>No saved items</h3><p>Tap the heart on any product to save it here.</p><a href="marketplace.html" class="btn btn-primary mt-4">Browse marketplace</a></div>
+    </div>
+  </main>
+  <footer class="site-footer"><div class="container footer-bottom"><p>© 2026 Student Marketplace. Phase 1 demo.</p></div></footer>
+  <script src="js/data.js"></script><script src="js/wishlist.js"></script><script src="js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var grid = document.getElementById("wish-grid");
+      var empty = document.getElementById("wish-empty");
+      var ids = window.Wishlist ? window.Wishlist.getAll() : [];
+      var items = ids.map(function (id) { return getListingById(id); }).filter(Boolean);
+      if (items.length === 0) { empty.classList.remove("hidden"); }
+      else { grid.innerHTML = items.map(renderProductCard).join(""); bindWishlistButtons(grid); }
+    });
+  </script>
+</body>
+</html>
