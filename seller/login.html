@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en-ZA">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Seller Login | Student Marketplace</title>
   <meta name="theme-color" content="#5420A8">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -9,19 +10,81 @@
   <link rel="stylesheet" href="../css/brand.css">
 </head>
 <body>
-  <header class="site-header"><div class="container header-inner">
-    <a href="../index.html" class="logo"><span class="logo-icon">SM</span><span>Seller Portal</span></a>
-    <a href="../index.html" class="btn btn-ghost btn-sm">Back to shop</a>
-  </div></header>
-  <main class="section"><div class="container" style="max-width:420px;">
-    <h1 class="section-title text-center">Seller login</h1>
-    <div class="demo-notice"><span>ℹ️</span><div>Connect Supabase (SETUP.md) for real auth.</div></div>
-    <form onsubmit="event.preventDefault();alert('Configure Supabase in js/supabase-client.js');">
-      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" required></div>
-      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" required></div>
-      <button type="submit" class="btn btn-primary btn-lg btn-block">Log in</button>
-    </form>
-    <p class="text-center mt-4" style="font-size:0.875rem;">No account? <a href="register.html">Apply as seller</a></p>
-  </div></main>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="logo"><span class="logo-icon">SM</span><span>Seller Portal</span></a>
+      <a href="../index.html" class="btn btn-ghost btn-sm">Back to shop</a>
+    </div>
+  </header>
+  <main class="section">
+    <div class="container" style="max-width:420px;">
+      <h1 class="section-title text-center">Seller login</h1>
+      <p class="section-subtitle text-center">Access your seller dashboard</p>
+      <div id="auth-message" style="display:none;"></div>
+      <form id="seller-login-form">
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input type="email" id="email" name="email" class="form-input" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input type="password" id="password" name="password" class="form-input" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Log in</button>
+      </form>
+      <p class="text-center mt-4" style="font-size:0.875rem;color:var(--color-text-secondary);">
+        No seller account? <a href="register.html">Apply as seller</a>
+      </p>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script>
+    function showMsg(text, isError) {
+      var el = document.getElementById("auth-message");
+      el.style.display = "block";
+      el.style.padding = "0.75rem 1rem";
+      el.style.borderRadius = "8px";
+      el.style.marginBottom = "1rem";
+      el.style.fontSize = "0.875rem";
+      el.style.background = isError ? "#FEF2F2" : "#ECFDF5";
+      el.style.color = isError ? "#DC2626" : "#059669";
+      el.style.border = "1px solid " + (isError ? "#FECACA" : "#A7F3D0");
+      el.textContent = text;
+    }
+
+    document.getElementById("seller-login-form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      var form = e.target;
+      var btn = form.querySelector('[type="submit"]');
+      var client = window.getSmClient && window.getSmClient();
+      if (!client) {
+        showMsg("Supabase client not loaded. Hard-refresh and check keys.", true);
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = "Logging in…";
+      try {
+        var result = await client.auth.signInWithPassword({
+          email: form.email.value.trim(),
+          password: form.password.value
+        });
+        if (result.error) throw result.error;
+        showMsg("Logged in. Redirecting to dashboard…", false);
+        setTimeout(function () {
+          window.location.href = "dashboard.html";
+        }, 800);
+      } catch (err) {
+        var m = (err && err.message) ? err.message : "Login failed";
+        if (/email not confirmed/i.test(m)) m = "Email not confirmed. Check your inbox or turn OFF Confirm email in Supabase.";
+        if (/invalid login|invalid credentials/i.test(m)) m = "Wrong email or password.";
+        if (/rate|too many/i.test(m)) m = "Too many attempts. Wait a few minutes.";
+        showMsg(m, true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Log in";
+      }
+    });
+  </script>
 </body>
 </html>

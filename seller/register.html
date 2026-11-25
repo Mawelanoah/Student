@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en-ZA">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Become a Seller | Student Marketplace</title>
   <meta name="theme-color" content="#5420A8">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -9,25 +10,152 @@
   <link rel="stylesheet" href="../css/brand.css">
 </head>
 <body>
-  <header class="site-header"><div class="container header-inner">
-    <a href="../index.html" class="logo"><span class="logo-icon">SM</span><span>Seller Portal</span></a>
-    <a href="login.html" class="btn btn-ghost btn-sm">Seller login</a>
-  </div></header>
-  <main class="section"><div class="container" style="max-width:480px;">
-    <h1 class="section-title text-center">Apply as seller</h1>
-    <p class="section-subtitle text-center">TUT students. Admin approval required.</p>
-    <div class="demo-notice"><span>ℹ️</span><div>Applications save to Supabase once configured. Form is a preview until then.</div></div>
-    <form onsubmit="event.preventDefault();alert('Supabase not configured. See SETUP.md');">
-      <div class="form-group"><label class="form-label">Full name *</label><input type="text" class="form-input" required></div>
-      <div class="form-group"><label class="form-label">Student email *</label><input type="email" class="form-input" required></div>
-      <div class="form-group"><label class="form-label">WhatsApp *</label><input type="tel" class="form-input" required></div>
-      <div class="form-group"><label class="form-label">Campus *</label>
-        <select class="form-select" required><option value="">Select</option><option>Pretoria Campus</option><option>Soshanguve Campus</option><option>Ga-Rankuwa Campus</option></select>
-      </div>
-      <div class="form-group"><label class="form-label">Student number</label><input type="text" class="form-input"></div>
-      <div class="form-group"><label class="form-label">Password *</label><input type="password" class="form-input" required minlength="8"></div>
-      <button type="submit" class="btn btn-primary btn-lg btn-block">Submit application</button>
-    </form>
-  </div></main>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="logo"><span class="logo-icon">SM</span><span>Seller Portal</span></a>
+      <a href="login.html" class="btn btn-ghost btn-sm">Seller login</a>
+    </div>
+  </header>
+  <main class="section">
+    <div class="container" style="max-width:480px;">
+      <h1 class="section-title text-center">Apply as seller</h1>
+      <p class="section-subtitle text-center">TUT students. Admin approval required before listing.</p>
+      <div id="auth-message" style="display:none;"></div>
+      <form id="seller-register-form">
+        <div class="form-group">
+          <label class="form-label" for="full_name">Full name *</label>
+          <input type="text" id="full_name" name="full_name" class="form-input" required autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="email">Student email *</label>
+          <input type="email" id="email" name="email" class="form-input" required autocomplete="email" placeholder="you@gmail.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="whatsapp">WhatsApp *</label>
+          <input type="tel" id="whatsapp" name="whatsapp" class="form-input" required placeholder="27… or 0…">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="campus">Campus *</label>
+          <select id="campus" name="campus" class="form-select" required>
+            <option value="">Select campus</option>
+            <option>Pretoria Campus</option>
+            <option>Soshanguve Campus</option>
+            <option>Ga-Rankuwa Campus</option>
+            <option>Other TUT campus</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="student_number">Student number</label>
+          <input type="text" id="student_number" name="student_number" class="form-input" placeholder="Optional">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Password *</label>
+          <input type="password" id="password" name="password" class="form-input" required minlength="6" autocomplete="new-password">
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Submit application</button>
+      </form>
+      <p class="text-center mt-4" style="font-size:0.875rem;">Already a seller? <a href="login.html">Log in</a></p>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script>
+    function showMsg(text, isError) {
+      var el = document.getElementById("auth-message");
+      el.style.display = "block";
+      el.style.padding = "0.75rem 1rem";
+      el.style.borderRadius = "8px";
+      el.style.marginBottom = "1rem";
+      el.style.fontSize = "0.875rem";
+      el.style.background = isError ? "#FEF2F2" : "#ECFDF5";
+      el.style.color = isError ? "#DC2626" : "#059669";
+      el.style.border = "1px solid " + (isError ? "#FECACA" : "#A7F3D0");
+      el.textContent = text;
+    }
+
+    document.getElementById("seller-register-form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      var form = e.target;
+      var btn = form.querySelector('[type="submit"]');
+      var client = window.getSmClient && window.getSmClient();
+      if (!client) {
+        showMsg("Supabase client not loaded. Check js/supabase-client.js keys and hard-refresh.", true);
+        return;
+      }
+
+      var fullName = form.full_name.value.trim();
+      var email = form.email.value.trim();
+      var whatsapp = form.whatsapp.value.trim();
+      var campus = form.campus.value;
+      var studentNumber = form.student_number.value.trim();
+      var password = form.password.value;
+
+      if (password.length < 6) {
+        showMsg("Password must be at least 6 characters.", true);
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Submitting…";
+
+      try {
+        // 1) Create auth user
+        var sign = await client.auth.signUp({
+          email: email,
+          password: password,
+          options: {
+            data: { full_name: fullName },
+            emailRedirectTo: "https://mawelanoah.github.io/Student/seller/login.html"
+          }
+        });
+        if (sign.error) throw sign.error;
+
+        var user = sign.data && sign.data.user;
+        var session = sign.data && sign.data.session;
+
+        // 2) Update profile contact fields (trigger already created row)
+        if (user && session) {
+          await client.from("profiles").update({
+            full_name: fullName,
+            email: email,
+            whatsapp: whatsapp,
+            campus: campus,
+            student_number: studentNumber || null
+          }).eq("id", user.id);
+
+          // 3) Seller application
+          var app = await client.from("seller_applications").insert({
+            user_id: user.id,
+            full_name: fullName,
+            email: email,
+            whatsapp: whatsapp,
+            campus: campus,
+            student_number: studentNumber || null,
+            status: "pending"
+          });
+          if (app.error) throw app.error;
+
+          showMsg("Application submitted. You can log in while you wait for admin approval.", false);
+          setTimeout(function () {
+            window.location.href = "login.html";
+          }, 1800);
+        } else if (user && !session) {
+          showMsg("Account created. Confirm your email (check inbox), then log in. Ask admin to approve your seller application after login. Or turn OFF Confirm email in Supabase while testing.", false);
+        } else {
+          showMsg("Account created. Please log in.", false);
+        }
+      } catch (err) {
+        console.error(err);
+        var m = (err && err.message) ? err.message : "Submission failed";
+        if (/rate|too many/i.test(m)) m = "Too many attempts. Wait a few minutes and try once.";
+        if (/already registered|already been registered/i.test(m)) m = "This email is already registered. Use Seller login instead.";
+        if (/row-level security|RLS|permission/i.test(m)) m = "Saved account but application blocked by database policy. Run the seller RLS SQL in SETUP (see chat).";
+        showMsg(m, true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Submit application";
+      }
+    });
+  </script>
 </body>
 </html>
