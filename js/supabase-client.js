@@ -7,7 +7,7 @@
 (function () {
   // ========== PASTE YOUR VALUES HERE ==========
   // Project URL looks like: https://abcdefghijklmnop.supabase.co
-  const SUPABASE_URL = "YOUR_SUPABASE_URL";
+  const SUPABASE_URL = sb_publishable_mSMP2mgZRbAtTo5zU9GMEA_ORSvW4qU;
 
   // Use the anon key (eyJ...) OR the publishable key (sb_publishable_...)
   // Do NOT use sb_secret_ or service_role here
