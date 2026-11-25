@@ -4,33 +4,63 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create account | Student Marketplace</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <meta name="theme-color" content="#5420A8">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/brand.css">
 </head>
 <body>
   <header class="site-header">
     <div class="container header-inner">
       <a href="index.html" class="logo"><span class="logo-icon">SM</span><span>Student Marketplace</span></a>
-      <nav class="nav-desktop"><a href="index.html">Home</a><a href="marketplace.html">Browse</a><a href="safety.html">Safety</a></nav>
-      <div class="header-actions"><a href="login.html" class="btn btn-ghost btn-sm">Log in</a>
-        <button class="menu-toggle" type="button" aria-label="Menu" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+      <nav class="nav-desktop"><a href="index.html">Home</a><a href="marketplace.html">Marketplace</a><a href="services.html">Services</a></nav>
+      <div class="header-actions">
+        <a href="login.html" class="btn btn-ghost btn-sm">Log in</a>
+        <button class="menu-toggle" type="button" aria-label="Menu" aria-expanded="false">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
     </div>
-    <nav class="nav-mobile" id="mobile-nav"><a href="index.html">Home</a><a href="marketplace.html">Browse</a><a href="login.html" class="btn btn-secondary">Log in</a></nav>
+    <nav class="nav-mobile" id="mobile-nav">
+      <a href="index.html">Home</a>
+      <a href="marketplace.html">Marketplace</a>
+      <a href="login.html" class="btn btn-secondary">Log in</a>
+    </nav>
   </header>
-  <main class="section"><div class="container" style="max-width:420px;">
-    <h1 class="section-title text-center">Create account</h1>
-    <p class="section-subtitle text-center">Join the TUT student marketplace</p>
-    <div class="demo-notice"><span>ℹ️</span><div><strong>Demo only</strong> — No account is created. Real registration comes in Phase 2.</div></div>
-    <form onsubmit="return false;">
-      <div class="form-group"><label class="form-label">Full name</label><input type="text" class="form-input" placeholder="Your name"></div>
-      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" placeholder="you@example.com"></div>
-      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" placeholder="Create a password"></div>
-      <button type="button" class="btn btn-primary btn-lg btn-block" onclick="alert('Demo only. Real registration in Phase 2.')">Create account (demo)</button>
-    </form>
-    <p class="text-center mt-4" style="font-size:0.875rem;color:var(--color-text-secondary);">Already have an account? <a href="login.html">Log in</a></p>
-  </div></main>
-  <footer class="site-footer"><div class="container footer-bottom"><p>© 2026 Student Marketplace. Phase 1 demo.</p></div></footer>
+  <main class="section">
+    <div class="container" style="max-width:420px;">
+      <h1 class="section-title text-center">Create account</h1>
+      <p class="section-subtitle text-center">Join the TUT student marketplace</p>
+      <div id="auth-message" style="display:none;"></div>
+      <form id="register-form">
+        <div class="form-group">
+          <label class="form-label" for="full_name">Full name</label>
+          <input type="text" id="full_name" name="full_name" class="form-input" autocomplete="name" placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input type="email" id="email" name="email" class="form-input" required autocomplete="email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input type="password" id="password" name="password" class="form-input" required minlength="6" autocomplete="new-password" placeholder="At least 6 characters">
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Create account</button>
+      </form>
+      <p class="text-center mt-4" style="font-size:0.875rem;color:var(--color-text-secondary);">
+        Already have an account? <a href="login.html">Log in</a>
+      </p>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
   <script src="js/main.js"></script>
+  <script>
+    document.getElementById("register-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      window.smRegister(this);
+    });
+  </script>
 </body>
 </html>
