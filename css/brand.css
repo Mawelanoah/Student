@@ -1,0 +1,11 @@
+/* Brand override – purple palette (loads after styles.css) */
+:root {
+  --color-primary: #5420A8;
+  --color-primary-hover: #6B2FC7;
+  --color-primary-light: #F3EEFC;
+  --color-primary-dark: #351078;
+  --color-text: #211B2D;
+}
+.hero {
+  background: linear-gradient(135deg, #F3EEFC 0%, #EDE4F9 40%, #F8FAFC 100%);
+}

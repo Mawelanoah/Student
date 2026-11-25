@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Become a Seller | Student Marketplace</title>
+  <meta name="theme-color" content="#5420A8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/brand.css">
+</head>
+<body>
+  <header class="site-header"><div class="container header-inner">
+    <a href="../index.html" class="logo"><span class="logo-icon">SM</span><span>Seller Portal</span></a>
+    <a href="login.html" class="btn btn-ghost btn-sm">Seller login</a>
+  </div></header>
+  <main class="section"><div class="container" style="max-width:480px;">
+    <h1 class="section-title text-center">Apply as seller</h1>
+    <p class="section-subtitle text-center">TUT students. Admin approval required.</p>
+    <div class="demo-notice"><span>ℹ️</span><div>Applications save to Supabase once configured. Form is a preview until then.</div></div>
+    <form onsubmit="event.preventDefault();alert('Supabase not configured. See SETUP.md');">
+      <div class="form-group"><label class="form-label">Full name *</label><input type="text" class="form-input" required></div>
+      <div class="form-group"><label class="form-label">Student email *</label><input type="email" class="form-input" required></div>
+      <div class="form-group"><label class="form-label">WhatsApp *</label><input type="tel" class="form-input" required></div>
+      <div class="form-group"><label class="form-label">Campus *</label>
+        <select class="form-select" required><option value="">Select</option><option>Pretoria Campus</option><option>Soshanguve Campus</option><option>Ga-Rankuwa Campus</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Student number</label><input type="text" class="form-input"></div>
+      <div class="form-group"><label class="form-label">Password *</label><input type="password" class="form-input" required minlength="8"></div>
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Submit application</button>
+    </form>
+  </div></main>
+</body>
+</html>

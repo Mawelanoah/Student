@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Student Marketplace</title>
+  <meta name="theme-color" content="#5420A8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/brand.css">
+  <style>
+    .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.75rem}
+    @media(min-width:700px){.stat-grid{grid-template-columns:repeat(4,1fr)}}
+    .stat-card{background:#fff;border:1px solid var(--color-border);border-radius:12px;padding:1rem}
+    .stat-card strong{display:block;font-size:1.35rem;color:var(--color-primary)}
+    .stat-card span{font-size:0.7rem;color:var(--color-text-muted)}
+  </style>
+</head>
+<body>
+  <header class="site-header"><div class="container header-inner">
+    <a href="dashboard.html" class="logo"><span class="logo-icon">SM</span><span>Admin</span></a>
+    <a href="login.html" class="btn btn-outline btn-sm">Logout</a>
+  </div></header>
+  <main class="section"><div class="container">
+    <h1 class="section-title">Admin overview</h1>
+    <div class="demo-notice"><span>ℹ️</span><div>Protect with profiles.role = admin. Stats from Supabase.</div></div>
+    <div class="stat-grid">
+      <div class="stat-card"><strong>—</strong><span>Users</span></div>
+      <div class="stat-card"><strong>—</strong><span>Sellers</span></div>
+      <div class="stat-card"><strong>—</strong><span>Products</span></div>
+      <div class="stat-card"><strong>—</strong><span>Services</span></div>
+      <div class="stat-card"><strong>—</strong><span>Pending sellers</span></div>
+      <div class="stat-card"><strong>—</strong><span>Pending listings</span></div>
+      <div class="stat-card"><strong>—</strong><span>Orders</span></div>
+      <div class="stat-card"><strong>—</strong><span>Bookings</span></div>
+      <div class="stat-card"><strong>—</strong><span>Reports</span></div>
+      <div class="stat-card"><strong>—</strong><span>Suspended</span></div>
+    </div>
+    <p style="margin-top:1.5rem"><a href="users.html" class="btn btn-outline btn-sm">Users</a>
+    <a href="listings.html" class="btn btn-outline btn-sm">Listings</a>
+    <a href="reports.html" class="btn btn-outline btn-sm">Reports</a></p>
+  </div></main>
+</body>
+</html>

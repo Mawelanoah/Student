@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login | Student Marketplace</title>
+  <meta name="theme-color" content="#5420A8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/brand.css">
+</head>
+<body>
+  <header class="site-header"><div class="container header-inner">
+    <a href="../index.html" class="logo"><span class="logo-icon">SM</span><span>Admin</span></a>
+  </div></header>
+  <main class="section"><div class="container" style="max-width:400px;">
+    <h1 class="section-title text-center">Admin login</h1>
+    <div class="demo-notice"><span>ℹ️</span><div>No public admin signup. Assign role in SQL only.</div></div>
+    <form onsubmit="event.preventDefault();alert('Restrict to profiles.role = admin after Supabase setup.');">
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" required></div>
+      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" required></div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg">Log in</button>
+    </form>
+  </div></main>
+</body>
+</html>
