@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services | Student Marketplace</title>
+  <meta name="theme-color" content="#5420A8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/brand.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo"><span class="logo-icon">SM</span><span>Student Marketplace</span></a>
+      <nav class="nav-desktop"><a href="index.html">Home</a><a href="marketplace.html">Marketplace</a><a href="services.html" class="active">Services</a></nav>
+      <div class="header-actions"><a href="login.html" class="btn btn-ghost btn-sm">Login</a>
+        <button class="menu-toggle" type="button" aria-label="Menu" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+      </div>
+    </div>
+    <nav class="nav-mobile" id="mobile-nav"><a href="index.html">Home</a><a href="marketplace.html">Marketplace</a><a href="services.html" class="active">Services</a></nav>
+  </header>
+  <main class="section"><div class="container">
+    <h1 class="section-title">Student services</h1>
+    <p class="section-subtitle">Hair, nails, tutoring, design and more</p>
+    <div class="demo-notice"><span>ℹ️</span><div>Sample providers until live services are approved.</div></div>
+    <div id="list" style="display:grid;gap:1rem;"></div>
+  </div></main>
+  <script src="js/data.js"></script><script src="js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var el = document.getElementById("list");
+      if (!window.SERVICES) { el.innerHTML = "<p>No services in demo data.</p>"; return; }
+      el.innerHTML = SERVICES.map(function (s) {
+        return '<div style="border:1px solid var(--color-border);border-radius:12px;padding:1.25rem;background:#fff;"><h3>' + escapeHtml(s.name) + '</h3><p style="font-size:0.875rem;color:var(--color-text-secondary);">' + escapeHtml(s.description) + '</p><p style="font-size:0.8rem;color:var(--color-text-muted);">' + escapeHtml(s.provider) + ' · from ' + formatPrice(s.priceFrom) + '</p><button type="button" class="btn btn-primary btn-sm" onclick="alert(\'Booking needs Supabase + login. See SETUP.md\')">Request booking</button></div>';
+      }).join("");
+    });
+  </script>
+</body>
+</html>
