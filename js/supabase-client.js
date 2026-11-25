@@ -33,8 +33,8 @@
       return null;
     }
     window.smClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
+      SUPABASE_URL =sb_publishable_mSMP2mgZRbAtTo5zU9GMEA_ORSvW4qU,
+      SUPABASE_ANON_KEY =sb_secret_SL4ql5UCqrG4MNQgb7Tc7A_3c5wQhiw;
     );
     return window.smClient;
   };
