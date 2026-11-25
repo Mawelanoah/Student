@@ -14,6 +14,32 @@
     el.style.borderRadius = "8px";
     el.style.marginBottom = "1rem";
     el.style.fontSize = "0.875rem";
+    el.style.lineHeight = "1.45";
+  }
+
+  function friendlyAuthError(err) {
+    if (!err) return "Something went wrong. Try again.";
+    var m = (err.message || err.msg || String(err)).toLowerCase();
+    var code = err.error_code || err.code || "";
+    if (m.indexOf("email not confirmed") !== -1 || code === "email_not_confirmed") {
+      return "Email not confirmed. Open the confirmation link in your inbox, or disable Confirm email in Supabase (Authentication → Providers → Email) while testing.";
+    }
+    if (m.indexOf("user already registered") !== -1 || m.indexOf("already been registered") !== -1) {
+      return "This email is already registered. Try logging in instead.";
+    }
+    if (m.indexOf("invalid login") !== -1 || m.indexOf("invalid credentials") !== -1) {
+      return "Wrong email or password.";
+    }
+    if (m.indexOf("password") !== -1 && m.indexOf("6") !== -1) {
+      return "Password must be at least 6 characters.";
+    }
+    if (m.indexOf("email address") !== -1 && m.indexOf("invalid") !== -1) {
+      return "Use a real email address (e.g. Gmail). Some test domains are blocked.";
+    }
+    if (m.indexOf("rate") !== -1) {
+      return "Too many attempts. Wait a minute and try again.";
+    }
+    return err.message || err.msg || "Request failed. Check your connection and try again.";
   }
 
   window.smRegister = async function (form) {
@@ -22,7 +48,7 @@
     if (!client) {
       showMsg(
         msg,
-        "Supabase is not connected. Add your Project URL and anon key in js/supabase-client.js",
+        "Supabase is not connected. Check js/supabase-client.js has your Project URL and publishable/anon key.",
         true
       );
       return;
@@ -47,21 +73,34 @@
       var result = await client.auth.signUp({
         email: email,
         password: password,
-        options: { data: { full_name: fullName } }
+        options: {
+          data: { full_name: fullName },
+          emailRedirectTo: "https://mawelanoah.github.io/Student/login.html"
+        }
       });
       if (result.error) throw result.error;
-      // Profile row is created by the database trigger handle_new_user
-      showMsg(
-        msg,
-        "Account created. Check your email to confirm if required, then log in.",
-        false
-      );
+
+      var session = result.data && result.data.session;
+      var user = result.data && result.data.user;
+
+      if (user && !session) {
+        // Email confirmation is ON in Supabase
+        showMsg(
+          msg,
+          "Account created. Check your email for a confirmation link, then log in. If no email arrives, in Supabase go to Authentication → Providers → Email and turn OFF Confirm email while testing.",
+          false
+        );
+        return;
+      }
+
+      showMsg(msg, "Account created. You are logged in — redirecting…", false);
       form.reset();
       setTimeout(function () {
-        window.location.href = "login.html";
-      }, 2000);
+        window.location.href = "index.html";
+      }, 1200);
     } catch (err) {
-      showMsg(msg, err.message || "Registration failed.", true);
+      console.error("Register error", err);
+      showMsg(msg, friendlyAuthError(err), true);
     } finally {
       if (btn) {
         btn.disabled = false;
@@ -76,7 +115,7 @@
     if (!client) {
       showMsg(
         msg,
-        "Supabase is not connected. Add your Project URL and anon key in js/supabase-client.js",
+        "Supabase is not connected. Check js/supabase-client.js has your Project URL and publishable/anon key.",
         true
       );
       return;
@@ -103,7 +142,8 @@
         window.location.href = "index.html";
       }, 800);
     } catch (err) {
-      showMsg(msg, err.message || "Login failed.", true);
+      console.error("Login error", err);
+      showMsg(msg, friendlyAuthError(err), true);
     } finally {
       if (btn) {
         btn.disabled = false;
