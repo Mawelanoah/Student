@@ -1,13 +1,16 @@
 /**
  * Supabase client for Student Marketplace
  *
- * 1. Supabase Dashboard → Project Settings → API
- * 2. Copy Project URL and anon public key below
- * 3. Never put the service_role key here
+ * Use ONLY the Project URL + anon / publishable key.
+ * NEVER put the service_role or sb_secret key in this file.
  */
 (function () {
   // ========== PASTE YOUR VALUES HERE ==========
+  // Project URL looks like: https://abcdefghijklmnop.supabase.co
   const SUPABASE_URL = "YOUR_SUPABASE_URL";
+
+  // Use the anon key (eyJ...) OR the publishable key (sb_publishable_...)
+  // Do NOT use sb_secret_ or service_role here
   const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
   // ============================================
 
@@ -15,16 +18,13 @@
     supabaseUrl: SUPABASE_URL,
     supabaseAnonKey: SUPABASE_ANON_KEY,
     configured:
-      SUPABASE_URL &&
-      SUPABASE_ANON_KEY &&
+      !!SUPABASE_URL &&
+      !!SUPABASE_ANON_KEY &&
       SUPABASE_URL.indexOf("YOUR_") === -1 &&
-      SUPABASE_ANON_KEY.indexOf("YOUR_") === -1
+      SUPABASE_ANON_KEY.indexOf("YOUR_") === -1 &&
+      SUPABASE_URL.indexOf("https://") === 0
   };
 
-  /**
- * Returns the Supabase client, or null if not configured / CDN not loaded.
- * Loads client once and reuses window.smClient.
- */
   window.getSmClient = function () {
     if (!window.SM_CONFIG.configured) return null;
     if (window.smClient) return window.smClient;
@@ -33,12 +33,11 @@
       return null;
     }
     window.smClient = window.supabase.createClient(
-      SUPABASE_URL =sb_publishable_mSMP2mgZRbAtTo5zU9GMEA_ORSvW4qU,
-      SUPABASE_ANON_KEY =sb_secret_SL4ql5UCqrG4MNQgb7Tc7A_3c5wQhiw;
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
     );
     return window.smClient;
   };
 
-  // Backwards compatible name
   window.initSupabase = window.getSmClient;
 })();
