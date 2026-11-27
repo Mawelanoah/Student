@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en-ZA">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Login | Student Marketplace</title>
   <meta name="theme-color" content="#5420A8">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -9,17 +10,95 @@
   <link rel="stylesheet" href="../css/brand.css">
 </head>
 <body>
-  <header class="site-header"><div class="container header-inner">
-    <a href="../index.html" class="logo"><span class="logo-icon">SM</span><span>Admin</span></a>
-  </div></header>
-  <main class="section"><div class="container" style="max-width:400px;">
-    <h1 class="section-title text-center">Admin login</h1>
-    <div class="demo-notice"><span>ℹ️</span><div>No public admin signup. Assign role in SQL only.</div></div>
-    <form onsubmit="event.preventDefault();alert('Restrict to profiles.role = admin after Supabase setup.');">
-      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" required></div>
-      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" required></div>
-      <button type="submit" class="btn btn-primary btn-block btn-lg">Log in</button>
-    </form>
-  </div></main>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="logo"><span class="logo-icon">SM</span><span>Admin</span></a>
+    </div>
+  </header>
+  <main class="section">
+    <div class="container" style="max-width:400px;">
+      <h1 class="section-title text-center">Admin login</h1>
+      <p class="section-subtitle text-center">No public admin registration. Role is assigned in the database only.</p>
+      <div id="auth-message" style="display:none;"></div>
+      <form id="admin-login-form">
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input type="email" id="email" name="email" class="form-input" required autocomplete="username" placeholder="admin@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input type="password" id="password" name="password" class="form-input" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg">Log in</button>
+      </form>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/session.js"></script>
+  <script>
+    (async function () {
+      // If already admin, go to dashboard
+      var client = window.smGetClient && window.smGetClient();
+      if (client) {
+        var u = await client.auth.getUser();
+        if (u.data && u.data.user) {
+          var p = await client.from("profiles").select("role,is_suspended").eq("id", u.data.user.id).maybeSingle();
+          if (p.data && p.data.role === "admin" && !p.data.is_suspended) {
+            window.location.href = "dashboard.html";
+            return;
+          }
+        }
+      }
+    })();
+
+    document.getElementById("admin-login-form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      var form = e.target;
+      var btn = form.querySelector('[type="submit"]');
+      var msg = document.getElementById("auth-message");
+      var client = window.smGetClient && window.smGetClient();
+      if (!client) {
+        window.smShowMsg("Supabase is not connected. Check js/supabase-client.js.", true);
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = "Checking…";
+      try {
+        var email = form.email.value.trim();
+        var password = form.password.value;
+        var sign = await client.auth.signInWithPassword({ email: email, password: password });
+        if (sign.error) throw sign.error;
+        var user = sign.data.user;
+        if (!user) throw new Error("No user returned");
+
+        var profRes = await client.from("profiles").select("*").eq("id", user.id).maybeSingle();
+        if (profRes.error) throw profRes.error;
+        var profile = profRes.data;
+        if (!profile) {
+          await client.auth.signOut();
+          throw new Error("No profile found for this account. Ensure the profile trigger ran and role is set.");
+        }
+        if (profile.is_suspended === true) {
+          await client.auth.signOut();
+          throw new Error("This account is suspended.");
+        }
+        if ((profile.role || "").toLowerCase() !== "admin") {
+          await client.auth.signOut();
+          throw new Error("Access denied. This account is not an administrator (role: " + (profile.role || "none") + ").");
+        }
+        window.smShowMsg("Welcome, admin. Redirecting…", false);
+        setTimeout(function () {
+          window.location.href = "dashboard.html";
+        }, 600);
+      } catch (err) {
+        console.error(err);
+        window.smShowMsg(window.smFriendlyAuthError(err), true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Log in";
+      }
+    });
+  </script>
 </body>
 </html>

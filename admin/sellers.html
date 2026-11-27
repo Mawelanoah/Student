@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seller applications | Admin</title>
+  <meta name="theme-color" content="#5420A8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/brand.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="dashboard.html" class="logo"><span class="logo-icon">SM</span><span>Admin</span></a>
+      <a href="dashboard.html" class="btn btn-ghost btn-sm">Dashboard</a>
+    </div>
+  </header>
+  <main class="section">
+    <div class="container">
+      <h1 class="section-title">All seller applications</h1>
+      <div id="list"><p>Loading…</p></div>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/session.js"></script>
+  <script>
+    (async function () {
+      var session = await window.smRequireRole(["admin"], "login.html");
+      if (!session) return;
+      var client = window.smGetClient();
+      var res = await client.from("seller_applications").select("*").order("created_at", { ascending: false }).limit(100);
+      var list = document.getElementById("list");
+      if (res.error) {
+        list.innerHTML = "<p style='color:#DC2626'>" + res.error.message + "</p>";
+        return;
+      }
+      if (!res.data.length) {
+        list.innerHTML = "<p>No applications yet.</p>";
+        return;
+      }
+      list.innerHTML = res.data.map(function (a) {
+        return "<div style='border:1px solid var(--color-border);border-radius:12px;padding:1rem;margin-bottom:0.75rem;background:#fff'>" +
+          "<strong>" + (a.full_name || "") + "</strong> · " + (a.status || "") +
+          "<br><span style='font-size:0.85rem;color:var(--color-text-secondary)'>" + (a.email || "") + " · " + (a.campus || "") + "</span></div>";
+      }).join("");
+    })();
+  </script>
+</body>
+</html>

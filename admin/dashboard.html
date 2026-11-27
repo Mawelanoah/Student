@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en-ZA">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard | Student Marketplace</title>
   <meta name="theme-color" content="#5420A8">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,31 +14,145 @@
     .stat-card{background:#fff;border:1px solid var(--color-border);border-radius:12px;padding:1rem}
     .stat-card strong{display:block;font-size:1.35rem;color:var(--color-primary)}
     .stat-card span{font-size:0.7rem;color:var(--color-text-muted)}
+    .app-card{border:1px solid var(--color-border);border-radius:12px;padding:1rem;margin-bottom:0.75rem;background:#fff}
+    .app-card h3{font-size:1rem;margin-bottom:0.35rem}
+    .app-meta{font-size:0.8rem;color:var(--color-text-secondary);margin-bottom:0.75rem}
+    .app-actions{display:flex;flex-wrap:wrap;gap:0.5rem}
   </style>
 </head>
 <body>
-  <header class="site-header"><div class="container header-inner">
-    <a href="dashboard.html" class="logo"><span class="logo-icon">SM</span><span>Admin</span></a>
-    <a href="login.html" class="btn btn-outline btn-sm">Logout</a>
-  </div></header>
-  <main class="section"><div class="container">
-    <h1 class="section-title">Admin overview</h1>
-    <div class="demo-notice"><span>ℹ️</span><div>Protect with profiles.role = admin. Stats from Supabase.</div></div>
-    <div class="stat-grid">
-      <div class="stat-card"><strong>—</strong><span>Users</span></div>
-      <div class="stat-card"><strong>—</strong><span>Sellers</span></div>
-      <div class="stat-card"><strong>—</strong><span>Products</span></div>
-      <div class="stat-card"><strong>—</strong><span>Services</span></div>
-      <div class="stat-card"><strong>—</strong><span>Pending sellers</span></div>
-      <div class="stat-card"><strong>—</strong><span>Pending listings</span></div>
-      <div class="stat-card"><strong>—</strong><span>Orders</span></div>
-      <div class="stat-card"><strong>—</strong><span>Bookings</span></div>
-      <div class="stat-card"><strong>—</strong><span>Reports</span></div>
-      <div class="stat-card"><strong>—</strong><span>Suspended</span></div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="dashboard.html" class="logo"><span class="logo-icon">SM</span><span>Admin</span></a>
+      <button type="button" class="btn btn-outline btn-sm" id="logout-btn">Logout</button>
     </div>
-    <p style="margin-top:1.5rem"><a href="users.html" class="btn btn-outline btn-sm">Users</a>
-    <a href="listings.html" class="btn btn-outline btn-sm">Listings</a>
-    <a href="reports.html" class="btn btn-outline btn-sm">Reports</a></p>
-  </div></main>
+  </header>
+  <main class="section">
+    <div class="container">
+      <h1 class="section-title">Admin overview</h1>
+      <p id="admin-name" class="section-subtitle">Loading…</p>
+      <div class="stat-grid" id="stats">
+        <div class="stat-card"><strong id="s-users">—</strong><span>Users</span></div>
+        <div class="stat-card"><strong id="s-sellers">—</strong><span>Sellers</span></div>
+        <div class="stat-card"><strong id="s-pending">—</strong><span>Pending sellers</span></div>
+        <div class="stat-card"><strong id="s-products">—</strong><span>Products</span></div>
+      </div>
+      <h2 class="section-title" style="margin-top:2rem;font-size:1.25rem;">Pending seller applications</h2>
+      <div id="apps-list"><p style="color:var(--color-text-muted)">Loading…</p></div>
+      <p style="margin-top:1.5rem">
+        <a href="sellers.html" class="btn btn-outline btn-sm">All applications</a>
+        <a href="../index.html" class="btn btn-ghost btn-sm">View shop</a>
+      </p>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/session.js"></script>
+  <script>
+    document.getElementById("logout-btn").addEventListener("click", function () {
+      window.smLogout("login.html");
+    });
+
+    (async function () {
+      var session = await window.smRequireRole(["admin"], "login.html");
+      if (!session) return;
+      document.getElementById("admin-name").textContent =
+        "Signed in as " + (session.profile.full_name || session.profile.email || "Admin");
+
+      var client = window.smGetClient();
+
+      async function loadStats() {
+        try {
+          var users = await client.from("profiles").select("id", { count: "exact", head: true });
+          var sellers = await client.from("profiles").select("id", { count: "exact", head: true }).eq("role", "seller");
+          var pending = await client.from("seller_applications").select("id", { count: "exact", head: true }).eq("status", "pending");
+          var products = await client.from("products").select("id", { count: "exact", head: true });
+          document.getElementById("s-users").textContent = users.count != null ? users.count : "—";
+          document.getElementById("s-sellers").textContent = sellers.count != null ? sellers.count : "—";
+          document.getElementById("s-pending").textContent = pending.count != null ? pending.count : "—";
+          document.getElementById("s-products").textContent = products.count != null ? products.count : "—";
+        } catch (e) {
+          console.warn("Stats", e);
+        }
+      }
+
+      async function loadApps() {
+        var list = document.getElementById("apps-list");
+        var res = await client
+          .from("seller_applications")
+          .select("*")
+          .eq("status", "pending")
+          .order("created_at", { ascending: false })
+          .limit(20);
+        if (res.error) {
+          list.innerHTML = "<p style='color:#DC2626'>Could not load applications: " + res.error.message +
+            ". Run supabase/rls-auth-fix.sql in the SQL Editor.</p>";
+          return;
+        }
+        if (!res.data || !res.data.length) {
+          list.innerHTML = "<p style='color:var(--color-text-muted)'>No pending applications.</p>";
+          return;
+        }
+        list.innerHTML = res.data.map(function (app) {
+          return (
+            '<div class="app-card" data-id="' + app.id + '">' +
+              "<h3>" + (app.full_name || "Applicant") + "</h3>" +
+              '<div class="app-meta">' + (app.email || "") + " · " + (app.whatsapp || "") +
+              " · " + (app.campus || "") + " · #" + (app.student_number || "—") + "</div>" +
+              '<div class="app-actions">' +
+              '<button type="button" class="btn btn-primary btn-sm" data-action="approve">Approve</button>' +
+              '<button type="button" class="btn btn-outline btn-sm" data-action="reject">Reject</button>' +
+              "</div></div>"
+          );
+        }).join("");
+
+        list.querySelectorAll("[data-action]").forEach(function (btn) {
+          btn.addEventListener("click", async function () {
+            var card = btn.closest(".app-card");
+            var id = card.getAttribute("data-id");
+            var action = btn.getAttribute("data-action");
+            btn.disabled = true;
+            try {
+              if (action === "approve") {
+                var r = await client.rpc("admin_review_seller_application", {
+                  application_id: id,
+                  new_status: "approved"
+                });
+                if (r.error) {
+                  // Fallback without RPC
+                  var appRow = res.data.find(function (a) { return a.id === id; });
+                  if (!appRow) throw r.error;
+                  var u1 = await client.from("seller_applications").update({ status: "approved", reviewed_at: new Date().toISOString() }).eq("id", id);
+                  if (u1.error) throw u1.error;
+                  if (appRow.user_id) {
+                    var u2 = await client.from("profiles").update({ role: "seller", is_verified: true }).eq("id", appRow.user_id);
+                    if (u2.error) throw u2.error;
+                  }
+                }
+                card.remove();
+              } else {
+                var r2 = await client.rpc("admin_review_seller_application", {
+                  application_id: id,
+                  new_status: "rejected"
+                });
+                if (r2.error) {
+                  var u3 = await client.from("seller_applications").update({ status: "rejected", reviewed_at: new Date().toISOString() }).eq("id", id);
+                  if (u3.error) throw u3.error;
+                }
+                card.remove();
+              }
+              loadStats();
+            } catch (err) {
+              alert(err.message || "Update failed. Run rls-auth-fix.sql so admins can approve.");
+              btn.disabled = false;
+            }
+          });
+        });
+      }
+
+      await loadStats();
+      await loadApps();
+    })();
+  </script>
 </body>
 </html>
