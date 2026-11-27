@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apply as Seller | Student Marketplace</title>
+  <meta name="theme-color" content="#5420A8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/brand.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="logo"><span class="logo-icon">SM</span><span>Student Marketplace</span></a>
+      <a href="../login.html" class="btn btn-ghost btn-sm" id="auth-link">Log in</a>
+    </div>
+  </header>
+  <main class="section">
+    <div class="container" style="max-width:480px;">
+      <h1 class="section-title">Apply to become a seller</h1>
+      <p class="section-subtitle">You must be logged in. Admin will review your application.</p>
+      <div id="auth-message" style="display:none;"></div>
+      <div id="login-required" style="display:none;">
+        <p style="margin-bottom:1rem;color:var(--color-text-secondary);">Please log in with your student account first, then return to this page.</p>
+        <a href="../login.html?next=seller/apply.html" class="btn btn-primary btn-block">Log in</a>
+        <p class="text-center mt-4" style="font-size:0.875rem;">No account? <a href="../register.html">Create one</a></p>
+      </div>
+      <form id="apply-form" style="display:none;">
+        <div class="form-group">
+          <label class="form-label" for="full_name">Full name *</label>
+          <input type="text" id="full_name" name="full_name" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="email">Email *</label>
+          <input type="email" id="email" name="email" class="form-input" required readonly>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="whatsapp">WhatsApp number *</label>
+          <input type="tel" id="whatsapp" name="whatsapp" class="form-input" required placeholder="e.g. 072…">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="institution">Institution *</label>
+          <input type="text" id="institution" name="institution" class="form-input" value="TUT" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="campus">Campus *</label>
+          <select id="campus" name="campus" class="form-select" required>
+            <option value="">Select campus</option>
+            <option>Pretoria Campus</option>
+            <option>Soshanguve Campus</option>
+            <option>Ga-Rankuwa Campus</option>
+            <option>eMalahleni Campus</option>
+            <option>Mbombela Campus</option>
+            <option>Other TUT campus</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="student_number">Student number</label>
+          <input type="text" id="student_number" name="student_number" class="form-input" placeholder="Optional">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="notes">What do you want to sell or offer? *</label>
+          <textarea id="notes" name="notes" class="form-textarea" required placeholder="e.g. Textbooks, braiding, tutoring…"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Submit application</button>
+      </form>
+      <div id="already-status" style="display:none;"></div>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/session.js"></script>
+  <script>
+    function showMsg(text, isError) {
+      var el = document.getElementById("auth-message");
+      el.style.display = "block";
+      el.style.padding = "0.75rem 1rem";
+      el.style.borderRadius = "8px";
+      el.style.marginBottom = "1rem";
+      el.style.fontSize = "0.875rem";
+      el.style.lineHeight = "1.45";
+      el.style.background = isError ? "#FEF2F2" : "#ECFDF5";
+      el.style.color = isError ? "#DC2626" : "#059669";
+      el.style.border = "1px solid " + (isError ? "#FECACA" : "#A7F3D0");
+      el.textContent = text;
+    }
+
+    (async function init() {
+      var client = window.smGetClient && window.smGetClient();
+      if (!client) {
+        showMsg("Supabase is not connected.", true);
+        return;
+      }
+      var userRes = await client.auth.getUser();
+      var user = userRes.data && userRes.data.user;
+      if (!user) {
+        document.getElementById("login-required").style.display = "block";
+        return;
+      }
+
+      document.getElementById("auth-link").textContent = "Account";
+      document.getElementById("auth-link").href = "../index.html";
+
+      // Load profile
+      var prof = await client.from("profiles").select("*").eq("id", user.id).maybeSingle();
+      var profile = prof.data || {};
+
+      if ((profile.role || "").toLowerCase() === "seller") {
+        document.getElementById("already-status").style.display = "block";
+        document.getElementById("already-status").innerHTML =
+          '<div class="demo-notice" style="background:#ECFDF5;border-color:#A7F3D0;color:#059669"><div>You are already an approved seller. <a href="dashboard.html">Open seller dashboard</a></div></div>';
+        return;
+      }
+
+      // Existing pending application?
+      var existing = await client
+        .from("seller_applications")
+        .select("id,status,created_at")
+        .eq("user_id", user.id)
+        .in("status", ["pending", "approved"])
+        .order("created_at", { ascending: false })
+        .limit(1);
+
+      if (existing.data && existing.data.length) {
+        var st = existing.data[0].status;
+        document.getElementById("already-status").style.display = "block";
+        if (st === "pending") {
+          document.getElementById("already-status").innerHTML =
+            '<div class="demo-notice"><div><strong>Application pending</strong> — Admin has not reviewed it yet. You cannot submit another while one is pending.</div></div>';
+          return;
+        }
+        if (st === "approved") {
+          document.getElementById("already-status").innerHTML =
+            '<div class="demo-notice" style="background:#ECFDF5;border-color:#A7F3D0;color:#059669"><div>Your application was approved. <a href="dashboard.html">Open seller dashboard</a></div></div>';
+          return;
+        }
+      }
+
+      var form = document.getElementById("apply-form");
+      form.style.display = "block";
+      form.full_name.value = profile.full_name || user.user_metadata && user.user_metadata.full_name || "";
+      form.email.value = profile.email || user.email || "";
+      form.whatsapp.value = profile.whatsapp || profile.cell_number || "";
+      form.institution.value = profile.institution || "TUT";
+      if (profile.campus) form.campus.value = profile.campus;
+      form.student_number.value = profile.student_number || "";
+
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        var btn = form.querySelector('[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = "Submitting…";
+        try {
+          // Refresh session user
+          var u2 = await client.auth.getUser();
+          if (!u2.data.user) throw new Error("Session expired. Log in again.");
+          var uid = u2.data.user.id;
+
+          // Double-check no pending
+          var dup = await client
+            .from("seller_applications")
+            .select("id")
+            .eq("user_id", uid)
+            .eq("status", "pending")
+            .limit(1);
+          if (dup.data && dup.data.length) {
+            throw new Error("You already have a pending application.");
+          }
+
+          // Update profile contact fields (not role)
+          await client.from("profiles").update({
+            full_name: form.full_name.value.trim(),
+            whatsapp: form.whatsapp.value.trim(),
+            campus: form.campus.value,
+            institution: form.institution.value.trim(),
+            student_number: form.student_number.value.trim() || null
+          }).eq("id", uid);
+
+          var payload = {
+            user_id: uid,
+            full_name: form.full_name.value.trim(),
+            email: form.email.value.trim(),
+            whatsapp: form.whatsapp.value.trim(),
+            campus: form.campus.value,
+            student_number: form.student_number.value.trim() || null,
+            notes: "Institution: " + form.institution.value.trim() + "\n" + form.notes.value.trim(),
+            status: "pending"
+          };
+
+          var ins = await client.from("seller_applications").insert(payload).select("id").single();
+          if (ins.error) throw ins.error;
+
+          form.style.display = "none";
+          showMsg("Application submitted successfully. Status: pending. You will get seller access after an admin approves you.", false);
+          document.getElementById("already-status").style.display = "block";
+          document.getElementById("already-status").innerHTML =
+            '<p style="margin-top:1rem"><a href="../index.html" class="btn btn-outline">Back to shop</a></p>';
+        } catch (err) {
+          console.error(err);
+          var m = err.message || "Could not save application";
+          if (/row-level security|RLS|permission|policy/i.test(m)) {
+            m = "Database permission error. Ask admin to run supabase/seller-applications-fix.sql in Supabase SQL Editor.";
+          }
+          showMsg(m, true);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Submit application";
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

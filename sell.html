@@ -3,44 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sell an Item | Student Marketplace</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <title>Sell | Student Marketplace</title>
+  <meta name="theme-color" content="#5420A8">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/brand.css">
 </head>
 <body>
   <header class="site-header">
     <div class="container header-inner">
       <a href="index.html" class="logo"><span class="logo-icon">SM</span><span>Student Marketplace</span></a>
-      <nav class="nav-desktop"><a href="index.html">Home</a><a href="marketplace.html">Browse</a><a href="how-it-works.html">How it works</a><a href="safety.html">Safety</a></nav>
-      <div class="header-actions"><a href="sell.html" class="btn btn-primary btn-sm">Sell an item</a><a href="login.html" class="btn btn-ghost btn-sm">Log in</a>
-        <button class="menu-toggle" type="button" aria-label="Menu" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+      <nav class="nav-desktop">
+        <a href="index.html">Home</a>
+        <a href="marketplace.html">Marketplace</a>
+        <a href="services.html">Services</a>
+      </nav>
+      <div class="header-actions">
+        <a href="login.html" class="btn btn-ghost btn-sm">Log in</a>
+        <button class="menu-toggle" type="button" aria-label="Menu" aria-expanded="false">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
     </div>
-    <nav class="nav-mobile" id="mobile-nav"><a href="index.html">Home</a><a href="marketplace.html">Browse</a><a href="sell.html" class="active">Sell</a><a href="login.html" class="btn btn-secondary">Log in</a></nav>
+    <nav class="nav-mobile" id="mobile-nav">
+      <a href="index.html">Home</a>
+      <a href="marketplace.html">Marketplace</a>
+      <a href="sell.html" class="active">Sell</a>
+      <a href="login.html">Log in</a>
+    </nav>
   </header>
-  <main class="section"><div class="container" style="max-width:640px;">
-    <h1 class="section-title">Sell an item</h1>
-    <p class="section-subtitle">Turn unused items into cash.</p>
-    <div class="demo-notice"><span>ℹ️</span><div><strong>Preview only</strong> — This form does not save anything. Real listing submission comes in Phase 2.</div></div>
-    <h2 style="font-size:1.125rem;margin-bottom:1rem;">How selling will work (Phase 2)</h2>
-    <ol style="color:var(--color-text-secondary);margin-bottom:2rem;padding-left:1.25rem;line-height:1.8;">
-      <li>Create a student account</li>
-      <li>Complete basic verification</li>
-      <li>Submit your product with photos</li>
-      <li>Wait for administrator review</li>
-      <li>Your approved listing goes live</li>
-    </ol>
-    <form onsubmit="return false;">
-      <div class="form-group"><label class="form-label">Product title</label><input type="text" class="form-input" placeholder="e.g. First Year Accounting Textbook"></div>
-      <div class="form-group"><label class="form-label">Category</label><select class="form-select"><option>Select category</option><option>Electronics</option><option>Fashion</option><option>Books and Stationery</option><option>Food and Groceries</option><option>Beauty and Personal Care</option><option>Accessories</option><option>Accommodation</option><option>Sports and Fitness</option><option>Other</option></select></div>
-      <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" placeholder="Condition, what is included…"></textarea></div>
-      <div class="form-group"><label class="form-label">Price (ZAR)</label><input type="number" class="form-input" placeholder="e.g. 450" min="1"></div>
-      <div class="form-group"><label class="form-label">Condition</label><select class="form-select"><option>Select condition</option><option>Brand New</option><option>Like New</option><option>Good</option><option>Fair</option></select></div>
-      <button type="button" class="btn btn-primary btn-lg btn-block" onclick="document.getElementById('demo-msg').classList.remove('hidden')">Preview submission (demo)</button>
-    </form>
-    <p id="demo-msg" class="hidden" style="margin-top:1rem;padding:1rem;background:var(--color-success-bg);color:var(--color-success);border-radius:var(--radius-md);">Demo only — nothing was saved. Real flow in Phase 2.</p>
-  </div></main>
-  <footer class="site-footer"><div class="container footer-bottom"><p>© 2026 Student Marketplace. Phase 1 demo.</p></div></footer>
+  <main class="section">
+    <div class="container" style="max-width:560px;">
+      <h1 class="section-title">Sell on campus</h1>
+      <p class="section-subtitle">Become a verified student seller, then list products or services.</p>
+      <div style="display:grid;gap:1rem;">
+        <a href="seller/apply.html" style="display:block;padding:1.25rem;border:1px solid var(--color-border);border-radius:12px;background:#fff;text-decoration:none;color:inherit;">
+          <strong style="color:var(--color-primary)">1. Apply as seller</strong>
+          <p style="margin:0.35rem 0 0;font-size:0.875rem;color:var(--color-text-secondary);">Submit your details. An admin must approve you before you can list items.</p>
+        </a>
+        <a href="seller/login.html" style="display:block;padding:1.25rem;border:1px solid var(--color-border);border-radius:12px;background:#fff;text-decoration:none;color:inherit;">
+          <strong style="color:var(--color-primary)">2. Seller login</strong>
+          <p style="margin:0.35rem 0 0;font-size:0.875rem;color:var(--color-text-secondary);">After approval, open your seller dashboard to add products and services.</p>
+        </a>
+      </div>
+      <p style="margin-top:1.5rem;font-size:0.875rem;color:var(--color-text-muted);">You need a normal student account first. <a href="register.html">Register</a> or <a href="login.html">log in</a>.</p>
+    </div>
+  </main>
   <script src="js/main.js"></script>
 </body>
 </html>
