@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en-ZA">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Seller Dashboard | Student Marketplace</title>
   <meta name="theme-color" content="#5420A8">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -18,31 +19,61 @@
   </style>
 </head>
 <body>
-  <header class="site-header"><div class="container header-inner">
-    <a href="dashboard.html" class="logo"><span class="logo-icon">SM</span><span>Seller</span></a>
-    <a href="../index.html" class="btn btn-ghost btn-sm">Shop</a>
-  </div></header>
-  <main class="section"><div class="container">
-    <h1 class="section-title">Dashboard</h1>
-    <div class="demo-notice"><span>ℹ️</span><div>Stats load from Supabase when connected.</div></div>
-    <nav class="dash-nav">
-      <a href="dashboard.html">Overview</a>
-      <a href="add-product.html">Add product</a>
-      <a href="products.html">My products</a>
-      <a href="add-service.html">Add service</a>
-      <a href="services.html">My services</a>
-      <a href="orders.html">Orders</a>
-      <a href="bookings.html">Bookings</a>
-      <a href="profile.html">Profile</a>
-    </nav>
-    <div class="stat-grid">
-      <div class="stat-card"><strong>—</strong><span>Active products</span></div>
-      <div class="stat-card"><strong>—</strong><span>Services</span></div>
-      <div class="stat-card"><strong>—</strong><span>Pending orders</span></div>
-      <div class="stat-card"><strong>—</strong><span>Confirmed orders</span></div>
-      <div class="stat-card"><strong>—</strong><span>Pending bookings</span></div>
-      <div class="stat-card"><strong>—</strong><span>Completed bookings</span></div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="dashboard.html" class="logo"><span class="logo-icon">SM</span><span>Seller</span></a>
+      <div class="header-actions">
+        <a href="../index.html" class="btn btn-ghost btn-sm">Shop</a>
+        <button type="button" class="btn btn-outline btn-sm" id="logout-btn">Logout</button>
+      </div>
     </div>
-  </div></main>
+  </header>
+  <main class="section">
+    <div class="container">
+      <h1 class="section-title">Dashboard</h1>
+      <p id="seller-name" class="section-subtitle">Checking access…</p>
+      <nav class="dash-nav" aria-label="Seller">
+        <a href="dashboard.html">Overview</a>
+        <a href="add-product.html">Add product</a>
+        <a href="products.html">My products</a>
+        <a href="add-service.html">Add service</a>
+        <a href="services.html">My services</a>
+        <a href="orders.html">Orders</a>
+        <a href="bookings.html">Bookings</a>
+        <a href="profile.html">Profile</a>
+      </nav>
+      <div class="stat-grid">
+        <div class="stat-card"><strong id="st-products">—</strong><span>My products</span></div>
+        <div class="stat-card"><strong id="st-services">—</strong><span>My services</span></div>
+        <div class="stat-card"><strong id="st-orders">—</strong><span>Orders</span></div>
+      </div>
+      <p style="margin-top:1.5rem;font-size:0.875rem;color:var(--color-text-secondary);">Only approved sellers can use this area. Listings remain subject to admin review where configured.</p>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/session.js"></script>
+  <script>
+    document.getElementById("logout-btn").addEventListener("click", function () {
+      window.smLogout("login.html");
+    });
+    (async function () {
+      // Allow seller OR admin (admin may inspect)
+      var session = await window.smRequireRole(["seller", "admin"], "login.html");
+      if (!session) return;
+      document.getElementById("seller-name").textContent =
+        "Hello, " + (session.profile.full_name || session.profile.email || "Seller");
+      var client = window.smGetClient();
+      var uid = session.user.id;
+      try {
+        var p = await client.from("products").select("id", { count: "exact", head: true }).eq("seller_id", uid);
+        var s = await client.from("services").select("id", { count: "exact", head: true }).eq("seller_id", uid);
+        var o = await client.from("orders").select("id", { count: "exact", head: true }).eq("seller_id", uid);
+        document.getElementById("st-products").textContent = p.count != null ? p.count : "0";
+        document.getElementById("st-services").textContent = s.count != null ? s.count : "0";
+        document.getElementById("st-orders").textContent = o.count != null ? o.count : "0";
+      } catch (e) { console.warn(e); }
+    })();
+  </script>
 </body>
 </html>
