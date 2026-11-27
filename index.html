@@ -6,31 +6,29 @@
   <meta name="theme-color" content="#5B21B6">
   <title>Student Marketplace</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/shop.css">
+  <link rel="stylesheet" href="css/shop.css?v=3">
+  <style>
+    /* emergency fallback if shop.css is cached empty */
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #F8F7FC; }
+  </style>
 </head>
 <body class="has-bottom-nav">
 
   <header class="mk-header">
     <div class="mk-header-row">
-      <a href="marketplace.html" class="mk-menu-btn" aria-label="Menu">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-      </a>
+      <a href="marketplace.html" class="mk-menu-btn" aria-label="Browse">☰</a>
       <a href="index.html" class="mk-brand">
         <span class="mk-brand-icon">🎓</span>
         <span>Student Marketplace</span>
       </a>
       <div class="mk-header-actions">
-        <a href="wishlist.html" class="mk-icon-btn" aria-label="Saved">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l3-8H6.4M7 13L5.4 5M7 13l-2 9m12-9l2 9M9 22a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z"/></svg>
-        </a>
-        <a href="login.html" class="mk-icon-btn" aria-label="Account">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-        </a>
+        <a href="wishlist.html" class="mk-icon-btn" aria-label="Cart">🛒</a>
+        <a href="login.html" class="mk-icon-btn" aria-label="Account">👤</a>
       </div>
     </div>
     <form class="mk-search" action="marketplace.html" method="get">
       <input type="search" name="q" placeholder="Search products and services…" aria-label="Search">
-      <button type="submit" aria-label="Search">🔍</button>
+      <button type="submit">Search</button>
     </form>
   </header>
 
@@ -39,7 +37,7 @@
     <a href="#" id="campus-change">Change ›</a>
   </div>
   <div id="campus-picker" style="display:none;padding:0.5rem 0.85rem">
-    <select id="campus-select" style="width:100%;padding:0.55rem;border-radius:10px;border:1px solid #DDD6FE;font-size:0.9rem">
+    <select id="campus-select" style="width:100%;padding:0.55rem;border-radius:10px;border:1px solid #DDD6FE">
       <option>TUT – Main Campus</option>
       <option>Pretoria Campus</option>
       <option>Soshanguve Campus</option>
@@ -59,7 +57,7 @@
       <a class="mk-cat" href="marketplace.html?category=electronics"><div class="mk-cat-circle">💻</div><span>Electronics</span></a>
       <a class="mk-cat" href="marketplace.html?category=fashion"><div class="mk-cat-circle">👕</div><span>Clothing</span></a>
       <a class="mk-cat" href="marketplace.html?category=accommodation"><div class="mk-cat-circle">🪑</div><span>Furniture</span></a>
-      <a class="mk-cat" href="marketplace.html?category=beauty"><div class="mk-cat-circle">✨</div><span>Beauty &amp; Hair</span></a>
+      <a class="mk-cat" href="marketplace.html?category=beauty"><div class="mk-cat-circle">✨</div><span>Beauty</span></a>
       <a class="mk-cat" href="services.html"><div class="mk-cat-circle">💇</div><span>Services</span></a>
       <a class="mk-cat" href="marketplace.html?category=accessories"><div class="mk-cat-circle">🎧</div><span>Accessories</span></a>
       <a class="mk-cat" href="marketplace.html"><div class="mk-cat-circle">📦</div><span>More</span></a>
@@ -80,10 +78,10 @@
       <h2>Pick Up Where You Left Off</h2>
       <a href="marketplace.html">View all →</a>
     </div>
-    <div class="mk-rail" id="rail-recent"></div>
+    <div class="mk-rail" id="rail-recent"><p style="padding:0.5rem 0.85rem;color:#64748B">Loading products…</p></div>
   </section>
 
-  <section class="mk-section">
+  <section class="mk-section" style="padding-bottom:2rem">
     <div class="mk-section-head">
       <h2>🔥 Special Deals</h2>
       <a href="marketplace.html">View all →</a>
@@ -100,127 +98,91 @@
     <a href="marketplace.html" class="btn-explore">Explore →</a>
   </div>
 
+  <p style="text-align:center;padding:0.5rem 1rem 2rem;font-size:0.8rem;color:#64748B">
+    <a href="seller/apply.html">Apply as seller</a> ·
+    <a href="admin/login.html">Admin</a> ·
+    <a href="login.html">Login</a>
+  </p>
+
   <nav class="mk-bottom" aria-label="Primary">
-    <a href="index.html" class="active">🏠<span>Home</span></a>
-    <a href="marketplace.html">▦<span>Categories</span></a>
+    <a href="index.html" class="active">🏠<br>Home</a>
+    <a href="marketplace.html">▦<br>Categories</a>
     <a href="sell.html" class="mk-sell-fab" aria-label="Sell">＋</a>
-    <a href="wishlist.html">🛒<span>Cart</span></a>
-    <a href="login.html">👤<span>Account</span></a>
+    <a href="wishlist.html">🛒<br>Cart</a>
+    <a href="login.html">👤<br>Account</a>
   </nav>
 
-  <script src="js/data.js"></script>
+  <script src="js/data.js?v=3"></script>
   <script>
-    (function () {
-      try {
-        var change = document.getElementById("campus-change");
-        var picker = document.getElementById("campus-picker");
-        var select = document.getElementById("campus-select");
-        var label = document.getElementById("campus-label");
-        if (change) {
-          change.addEventListener("click", function (e) {
-            e.preventDefault();
-            picker.style.display = picker.style.display === "none" ? "block" : "none";
-          });
-        }
-        if (select) {
-          select.addEventListener("change", function () {
-            label.textContent = this.value;
-            picker.style.display = "none";
-          });
-        }
+  window.addEventListener("DOMContentLoaded", function () {
+    var change = document.getElementById("campus-change");
+    var picker = document.getElementById("campus-picker");
+    var select = document.getElementById("campus-select");
+    var label = document.getElementById("campus-label");
+    if (change && picker) {
+      change.onclick = function (e) {
+        e.preventDefault();
+        picker.style.display = picker.style.display === "none" ? "block" : "none";
+      };
+    }
+    if (select && label) {
+      select.onchange = function () {
+        label.textContent = this.value;
+        picker.style.display = "none";
+      };
+    }
 
-        function money(n) {
-          try {
-            if (typeof formatPrice === "function") return formatPrice(n);
-          } catch (e) {}
-          return "R" + Number(n || 0).toLocaleString("en-ZA");
-        }
+    function money(n) {
+      n = Number(n) || 0;
+      return "R" + n.toLocaleString("en-ZA");
+    }
 
-        function getList() {
-          var src = (typeof LISTINGS !== "undefined" && LISTINGS) ? LISTINGS
-            : (window.LISTINGS || []);
-          return src.filter(function (l) {
-            return !l.status || l.status === "active";
-          });
-        }
+    var list = [];
+    try {
+      list = (window.LISTINGS || LISTINGS || []).filter(function (l) {
+        return !l.status || l.status === "active";
+      });
+    } catch (e) {
+      list = [];
+    }
 
-        function imgUrl(l) {
-          if (l.images && l.images.length) return l.images[0];
-          if (l.image) return l.image;
-          return "";
-        }
-
-        function campusOf(l) {
-          return l.campus || l.location || "TUT Campus";
-        }
-
-        function disc(l) {
-          var price = Number(l.price) || 0;
-          var orig = Number(l.originalPrice) || 0;
-          if (!orig || orig <= price) {
-            // synthetic demo discount for display only
-            orig = Math.round(price * 1.2);
-          }
-          var pct = Math.round((1 - price / orig) * 100);
-          return { orig: orig, pct: pct > 0 && pct < 90 ? pct : 0 };
-        }
-
-        function hCard(l) {
-          var d = disc(l);
-          var img = imgUrl(l);
-          return (
-            '<a class="mk-card" href="product.html?id=' + encodeURIComponent(l.id) + '">' +
-              '<div class="mk-card-img">' +
-                (d.pct ? '<span class="mk-disc">-' + d.pct + '%</span>' : '') +
-                (img ? '<img src="' + img + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '') +
-              '</div>' +
-              '<div>' +
-                '<div class="mk-card-title">' + (l.title || "Item") + '</div>' +
-                '<div><span class="mk-price">' + money(l.price) + '</span>' +
-                (d.pct ? '<span class="mk-price-old">' + money(d.orig) + '</span>' : '') + '</div>' +
-                '<div class="mk-loc">📍 ' + campusOf(l) + '</div>' +
-                '<span class="mk-stock">In Stock</span>' +
-              '</div></a>'
-          );
-        }
-
-        function gCard(l) {
-          var d = disc(l);
-          var img = imgUrl(l);
-          return (
-            '<a class="mk-grid-card" href="product.html?id=' + encodeURIComponent(l.id) + '">' +
-              '<div class="mk-grid-img">' +
-                (d.pct ? '<span class="mk-disc">-' + d.pct + '%</span>' : '') +
-                (img ? '<img src="' + img + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '') +
-              '</div>' +
-              '<div class="mk-grid-body">' +
-                '<div class="mk-card-title">' + (l.title || "Item") + '</div>' +
-                '<div><span class="mk-price">' + money(l.price) + '</span>' +
-                (d.pct ? '<span class="mk-price-old">' + money(d.orig) + '</span>' : '') + '</div>' +
-              '</div></a>'
-          );
-        }
-
-        var list = getList();
-        var rail = document.getElementById("rail-recent");
-        var grid = document.getElementById("grid-deals");
-
-        if (rail) {
-          rail.innerHTML = list.length
-            ? list.slice(0, 6).map(hCard).join("")
-            : '<p style="padding:0 0.85rem;color:#64748B">No products loaded. Check js/data.js</p>';
-        }
-        if (grid) {
-          grid.innerHTML = list.length
-            ? list.slice(0, 8).map(gCard).join("")
-            : '<p style="padding:0 0.85rem;color:#64748B">No deals yet.</p>';
-        }
-      } catch (err) {
-        console.error(err);
-        var r = document.getElementById("rail-recent");
-        if (r) r.innerHTML = '<p style="padding:1rem;color:#DC2626">Error loading products. Please refresh.</p>';
+    function card(l, grid) {
+      var price = Number(l.price) || 0;
+      var orig = Number(l.originalPrice) || Math.round(price * 1.2);
+      var pct = orig > price ? Math.round((1 - price / orig) * 100) : 0;
+      var img = (l.images && l.images[0]) || l.image || "";
+      var campus = l.campus || l.location || "TUT Campus";
+      var href = "product.html?id=" + encodeURIComponent(l.id);
+      if (grid) {
+        return '<a class="mk-grid-card" href="' + href + '">' +
+          '<div class="mk-grid-img">' + (pct ? '<span class="mk-disc">-' + pct + '%</span>' : '') +
+          (img ? '<img src="' + img + '" alt="" loading="lazy">' : '') + '</div>' +
+          '<div class="mk-grid-body"><div class="mk-card-title">' + (l.title || "Item") + '</div>' +
+          '<div><span class="mk-price">' + money(price) + '</span>' +
+          (pct ? '<span class="mk-price-old">' + money(orig) + '</span>' : '') + '</div></div></a>';
       }
-    })();
+      return '<a class="mk-card" href="' + href + '">' +
+        '<div class="mk-card-img">' + (pct ? '<span class="mk-disc">-' + pct + '%</span>' : '') +
+        (img ? '<img src="' + img + '" alt="" loading="lazy">' : '') + '</div>' +
+        '<div><div class="mk-card-title">' + (l.title || "Item") + '</div>' +
+        '<div><span class="mk-price">' + money(price) + '</span>' +
+        (pct ? '<span class="mk-price-old">' + money(orig) + '</span>' : '') + '</div>' +
+        '<div class="mk-loc">📍 ' + campus + '</div><span class="mk-stock">In Stock</span></div></a>';
+    }
+
+    var rail = document.getElementById("rail-recent");
+    var grid = document.getElementById("grid-deals");
+    if (rail) {
+      rail.innerHTML = list.length
+        ? list.slice(0, 6).map(function (l) { return card(l, false); }).join("")
+        : '<p style="padding:0.85rem;color:#b91c1c">Could not load products. <a href="marketplace.html">Open marketplace</a></p>';
+    }
+    if (grid) {
+      grid.innerHTML = list.length
+        ? list.slice(0, 8).map(function (l) { return card(l, true); }).join("")
+        : "";
+    }
+  });
   </script>
 </body>
 </html>
