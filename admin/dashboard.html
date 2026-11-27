@@ -16,8 +16,9 @@
     .stat-card span{font-size:0.7rem;color:var(--color-text-muted)}
     .app-card{border:1px solid var(--color-border);border-radius:12px;padding:1rem;margin-bottom:0.75rem;background:#fff}
     .app-card h3{font-size:1rem;margin-bottom:0.35rem}
-    .app-meta{font-size:0.8rem;color:var(--color-text-secondary);margin-bottom:0.75rem}
-    .app-actions{display:flex;flex-wrap:wrap;gap:0.5rem}
+    .app-meta{font-size:0.8rem;color:var(--color-text-secondary);margin-bottom:0.5rem;white-space:pre-wrap}
+    .app-actions{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.75rem}
+    .empty-box{background:var(--color-surface);border:1px dashed var(--color-border);border-radius:12px;padding:1.25rem;font-size:0.9rem;color:var(--color-text-secondary);line-height:1.5}
   </style>
 </head>
 <body>
@@ -37,10 +38,18 @@
         <div class="stat-card"><strong id="s-pending">—</strong><span>Pending sellers</span></div>
         <div class="stat-card"><strong id="s-products">—</strong><span>Products</span></div>
       </div>
+
       <h2 class="section-title" style="margin-top:2rem;font-size:1.25rem;">Pending seller applications</h2>
+      <p style="font-size:0.85rem;color:var(--color-text-muted);margin-bottom:1rem;">
+        Approve/Reject buttons appear only when a student has submitted an application.
+      </p>
       <div id="apps-list"><p style="color:var(--color-text-muted)">Loading…</p></div>
+
+      <h2 class="section-title" style="margin-top:2rem;font-size:1.25rem;">All applications</h2>
+      <div id="all-apps"><p style="color:var(--color-text-muted)">Loading…</p></div>
+
       <p style="margin-top:1.5rem">
-        <a href="sellers.html" class="btn btn-outline btn-sm">All applications</a>
+        <a href="../seller/apply.html" class="btn btn-primary btn-sm" target="_blank">Open apply form</a>
         <a href="../index.html" class="btn btn-ghost btn-sm">View shop</a>
       </p>
     </div>
@@ -52,6 +61,14 @@
     document.getElementById("logout-btn").addEventListener("click", function () {
       window.smLogout("login.html");
     });
+
+    function escapeHtml(s) {
+      return String(s == null ? "" : s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
 
     (async function () {
       var session = await window.smRequireRole(["admin"], "login.html");
@@ -76,31 +93,54 @@
         }
       }
 
-      async function loadApps() {
+      async function reviewApp(id, newStatus, appRow) {
+        var r = await client.rpc("admin_review_seller_application", {
+          application_id: id,
+          new_status: newStatus
+        });
+        if (r.error) {
+          // Fallback direct updates (needs RLS policies)
+          var u1 = await client.from("seller_applications").update({
+            status: newStatus,
+            reviewed_at: new Date().toISOString()
+          }).eq("id", id);
+          if (u1.error) throw u1.error;
+          if (newStatus === "approved" && appRow && appRow.user_id) {
+            var u2 = await client.from("profiles").update({
+              role: "seller",
+              is_verified: true
+            }).eq("id", appRow.user_id);
+            if (u2.error) throw u2.error;
+          }
+        }
+      }
+
+      function renderPending(rows) {
         var list = document.getElementById("apps-list");
-        var res = await client
-          .from("seller_applications")
-          .select("*")
-          .eq("status", "pending")
-          .order("created_at", { ascending: false })
-          .limit(20);
-        if (res.error) {
-          list.innerHTML = "<p style='color:#DC2626'>Could not load applications: " + res.error.message +
-            ". Run supabase/rls-auth-fix.sql in the SQL Editor.</p>";
+        if (!rows.length) {
+          list.innerHTML =
+            '<div class="empty-box">' +
+            "<strong>No pending applications yet.</strong><br><br>" +
+            "Approve buttons only appear after a <em>student</em> account submits the form.<br><br>" +
+            "1. Open a private/incognito window<br>" +
+            "2. Register a second student account (not admin)<br>" +
+            "3. Go to <a href='../seller/apply.html'>seller/apply.html</a> and submit<br>" +
+            "4. Refresh this dashboard — Approve / Reject will show here" +
+            "</div>";
           return;
         }
-        if (!res.data || !res.data.length) {
-          list.innerHTML = "<p style='color:var(--color-text-muted)'>No pending applications.</p>";
-          return;
-        }
-        list.innerHTML = res.data.map(function (app) {
+        list.innerHTML = rows.map(function (app) {
           return (
             '<div class="app-card" data-id="' + app.id + '">' +
-              "<h3>" + (app.full_name || "Applicant") + "</h3>" +
-              '<div class="app-meta">' + (app.email || "") + " · " + (app.whatsapp || "") +
-              " · " + (app.campus || "") + " · #" + (app.student_number || "—") + "</div>" +
+              "<h3>" + escapeHtml(app.full_name || "Applicant") + "</h3>" +
+              '<div class="app-meta">' +
+              escapeHtml(app.email || "") + " · WhatsApp: " + escapeHtml(app.whatsapp || "—") +
+              "\nCampus: " + escapeHtml(app.campus || "—") +
+              " · Student #: " + escapeHtml(app.student_number || "—") +
+              (app.notes ? "\n" + escapeHtml(app.notes) : "") +
+              "</div>" +
               '<div class="app-actions">' +
-              '<button type="button" class="btn btn-primary btn-sm" data-action="approve">Approve</button>' +
+              '<button type="button" class="btn btn-primary btn-sm" data-action="approve">Approve as seller</button>' +
               '<button type="button" class="btn btn-outline btn-sm" data-action="reject">Reject</button>' +
               "</div></div>"
           );
@@ -111,47 +151,66 @@
             var card = btn.closest(".app-card");
             var id = card.getAttribute("data-id");
             var action = btn.getAttribute("data-action");
+            var appRow = rows.find(function (a) { return a.id === id; });
             btn.disabled = true;
             try {
-              if (action === "approve") {
-                var r = await client.rpc("admin_review_seller_application", {
-                  application_id: id,
-                  new_status: "approved"
-                });
-                if (r.error) {
-                  // Fallback without RPC
-                  var appRow = res.data.find(function (a) { return a.id === id; });
-                  if (!appRow) throw r.error;
-                  var u1 = await client.from("seller_applications").update({ status: "approved", reviewed_at: new Date().toISOString() }).eq("id", id);
-                  if (u1.error) throw u1.error;
-                  if (appRow.user_id) {
-                    var u2 = await client.from("profiles").update({ role: "seller", is_verified: true }).eq("id", appRow.user_id);
-                    if (u2.error) throw u2.error;
-                  }
-                }
-                card.remove();
-              } else {
-                var r2 = await client.rpc("admin_review_seller_application", {
-                  application_id: id,
-                  new_status: "rejected"
-                });
-                if (r2.error) {
-                  var u3 = await client.from("seller_applications").update({ status: "rejected", reviewed_at: new Date().toISOString() }).eq("id", id);
-                  if (u3.error) throw u3.error;
-                }
-                card.remove();
-              }
-              loadStats();
+              await reviewApp(id, action === "approve" ? "approved" : "rejected", appRow);
+              card.remove();
+              await loadStats();
+              await loadAll();
             } catch (err) {
-              alert(err.message || "Update failed. Run rls-auth-fix.sql so admins can approve.");
+              alert((err && err.message) || "Update failed. Run seller-applications-fix.sql in Supabase.");
               btn.disabled = false;
             }
           });
         });
       }
 
+      async function loadPending() {
+        var res = await client
+          .from("seller_applications")
+          .select("*")
+          .eq("status", "pending")
+          .order("created_at", { ascending: false })
+          .limit(50);
+        if (res.error) {
+          document.getElementById("apps-list").innerHTML =
+            "<p style='color:#DC2626'>Error loading applications: " + escapeHtml(res.error.message) +
+            ". Run supabase/seller-applications-fix.sql in the SQL Editor.</p>";
+          return;
+        }
+        renderPending(res.data || []);
+      }
+
+      async function loadAll() {
+        var box = document.getElementById("all-apps");
+        var res = await client
+          .from("seller_applications")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(100);
+        if (res.error) {
+          box.innerHTML = "<p style='color:#DC2626'>" + escapeHtml(res.error.message) + "</p>";
+          return;
+        }
+        if (!res.data || !res.data.length) {
+          box.innerHTML = '<div class="empty-box">Table is empty — no one has applied yet.</div>';
+          return;
+        }
+        box.innerHTML = res.data.map(function (a) {
+          return (
+            '<div class="app-card">' +
+              "<strong>" + escapeHtml(a.full_name || "") + "</strong> · " +
+              "<span style='text-transform:uppercase;font-size:0.75rem'>" + escapeHtml(a.status) + "</span>" +
+              "<div class='app-meta'>" + escapeHtml(a.email || "") + " · " + escapeHtml(a.whatsapp || "") + "</div>" +
+            "</div>"
+          );
+        }).join("");
+      }
+
       await loadStats();
-      await loadApps();
+      await loadPending();
+      await loadAll();
     })();
   </script>
 </body>
