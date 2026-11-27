@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add service | Seller</title>
+  <meta name="theme-color" content="#5420A8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/brand.css">
+</head>
+<body>
+  <header class="site-header"><div class="container header-inner">
+    <a href="dashboard.html" class="logo"><span class="logo-icon">SM</span><span>Seller</span></a>
+    <a href="dashboard.html" class="btn btn-ghost btn-sm">Dashboard</a>
+  </div></header>
+  <main class="section"><div class="container" style="max-width:520px">
+    <h1 class="section-title">Add service</h1>
+    <div id="auth-message" style="display:none"></div>
+    <form id="form">
+      <div class="form-group"><label class="form-label">Service name *</label><input class="form-input" name="title" required></div>
+      <div class="form-group"><label class="form-label">Description *</label><textarea class="form-textarea" name="description" required rows="4"></textarea></div>
+      <div class="form-group"><label class="form-label">Price from (R) *</label><input class="form-input" name="price" type="number" min="1" required></div>
+      <div class="form-group"><label class="form-label">Campus / location *</label>
+        <select class="form-select" name="location" required>
+          <option value="">Select</option>
+          <option>Pretoria Campus</option>
+          <option>Soshanguve Campus</option>
+          <option>Ga-Rankuwa Campus</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Available days</label><input class="form-input" name="available_days" placeholder="Mon–Fri"></div>
+      <div class="form-group"><label class="form-label">Working hours</label><input class="form-input" name="hours" placeholder="09:00–17:00"></div>
+      <div class="form-group"><label class="form-label">Image URL</label><input class="form-input" name="image_url" type="url"></div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg">Publish service</button>
+    </form>
+  </div></main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/session.js"></script>
+  <script>
+  (async function () {
+    var session = await window.smRequireRole(["seller", "admin"], "login.html");
+    if (!session) return;
+    var client = window.smGetClient();
+    document.getElementById("form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      var f = e.target;
+      var btn = f.querySelector('[type=submit]');
+      btn.disabled = true;
+      try {
+        var notes = [f.available_days.value, f.hours.value].filter(Boolean).join(" | ");
+        var row = {
+          seller_id: session.user.id,
+          title: f.title.value.trim(),
+          description: f.description.value.trim() + (notes ? "\n\nAvailability: " + notes : ""),
+          price: Number(f.price.value),
+          location: f.location.value,
+          status: "active"
+        };
+        // services table may use name instead of title — try both via schema
+        var ins = await client.from("services").insert(row).select("id").single();
+        if (ins.error) {
+          // fallback column name
+          row.name = row.title;
+          delete row.title;
+          ins = await client.from("services").insert(row).select("id").single();
+          if (ins.error) throw ins.error;
+        }
+        window.smShowMsg("Service published.", false);
+        setTimeout(function () { location.href = "dashboard.html"; }, 900);
+      } catch (err) {
+        window.smShowMsg((err && err.message) || "Save failed. Check services table / RLS.", true);
+        btn.disabled = false;
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

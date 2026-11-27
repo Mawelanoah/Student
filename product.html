@@ -2,71 +2,174 @@
 <html lang="en-ZA">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#5420A8">
   <title>Product | Student Marketplace</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/shop.css?v=4">
   <style>
-    .product-detail { display: grid; gap: 2rem; }
-    @media (min-width: 768px) { .product-detail { grid-template-columns: 1fr 1fr; } }
-    .product-gallery img { width: 100%; border-radius: var(--radius-lg); aspect-ratio: 1; object-fit: cover; background: var(--color-surface); }
-    .product-info h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
-    .product-price { font-size: 1.75rem; font-weight: 700; color: var(--color-primary); margin: 1rem 0; }
-    .seller-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.25rem; margin-top: 1.5rem; }
-    .safety-note { background: var(--color-warning-bg); border: 1px solid #FDE68A; border-radius: var(--radius-md); padding: 1rem; margin-top: 1.5rem; font-size: 0.875rem; color: #92400E; }
+    .pd { max-width: 720px; margin: 0 auto; padding: 0 16px 100px; }
+    .pd-img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 14px; background: #F0EEF5; margin: 16px 0; }
+    .pd-title { font-size: 1.35rem; font-weight: 800; margin: 0 0 8px; letter-spacing: -0.02em; }
+    .pd-price { font-size: 1.5rem; font-weight: 800; color: #5420A8; }
+    .pd-old { font-size: 0.95rem; color: #9CA3AF; text-decoration: line-through; margin-left: 8px; font-weight: 500; }
+    .pd-meta { font-size: 0.85rem; color: #6B6575; margin: 8px 0 16px; }
+    .pd-desc { font-size: 0.95rem; color: #374151; line-height: 1.55; margin-bottom: 16px; }
+    .pd-box { background: #fff; border: 1px solid #E8E0F5; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+    .pd-box h3 { margin: 0 0 8px; font-size: 0.9rem; }
+    .pd-box p { margin: 4px 0; font-size: 0.85rem; color: #4B5563; }
+    .pd-wa {
+      display: block; width: 100%; text-align: center; background: #25D366; color: #fff !important;
+      font-weight: 700; font-size: 1rem; padding: 14px; border-radius: 12px; margin-top: 8px;
+    }
+    .pd-wa:hover { filter: brightness(0.95); }
+    .pd-wa.disabled { background: #9CA3AF; pointer-events: none; }
+    .pd-note { font-size: 0.8rem; color: #6B6575; margin-top: 10px; line-height: 1.4; }
+    .pd-back { display: inline-block; margin: 12px 0 0; font-size: 0.85rem; font-weight: 600; color: #5420A8; }
+    .pd-disc { display: inline-block; background: #5420A8; color: #fff; font-size: 0.75rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; margin-left: 8px; }
   </style>
 </head>
-<body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a href="index.html" class="logo"><span class="logo-icon">SM</span><span>Student Marketplace</span></a>
-      <nav class="nav-desktop"><a href="index.html">Home</a><a href="marketplace.html">Browse</a><a href="how-it-works.html">How it works</a><a href="safety.html">Safety</a></nav>
-      <div class="header-actions"><a href="sell.html" class="btn btn-primary btn-sm">Sell an item</a><a href="login.html" class="btn btn-ghost btn-sm">Log in</a>
-        <button class="menu-toggle" type="button" aria-label="Menu" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+<body class="has-bottom-nav">
+  <header class="sm-header">
+    <div class="sm-header-top">
+      <a href="index.html" class="sm-logo"><span class="sm-logo-mark">SM</span><span class="sm-logo-text">Student Marketplace</span></a>
+      <div class="sm-header-actions">
+        <a href="login.html" class="sm-icon-link" aria-label="Account">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        </a>
+      </div>
     </div>
-    <nav class="nav-mobile" id="mobile-nav"><a href="index.html">Home</a><a href="marketplace.html">Browse</a><a href="sell.html">Sell</a><a href="safety.html">Safety</a><a href="login.html" class="btn btn-secondary">Log in</a></nav>
   </header>
-  <main class="section"><div class="container">
-    <div class="demo-notice"><span>ℹ️</span><div><strong>Demo product</strong> — Sample data only. Contact is a preview.</div></div>
-    <div id="product-content"><p>Loading…</p></div>
-  </div></main>
-  <footer class="site-footer"><div class="container footer-bottom"><p>© 2026 Student Marketplace. Phase 1 demo.</p></div></footer>
-  <script src="js/data.js"></script><script src="js/main.js"></script>
+
+  <div class="pd" id="product-root">
+    <a class="pd-back" href="marketplace.html">← Back to marketplace</a>
+    <p style="color:#6B6575">Loading product…</p>
+  </div>
+
+  <nav class="sm-bottom" aria-label="Main">
+    <a href="index.html"><span>Home</span></a>
+    <a href="marketplace.html" class="is-active"><span>Browse</span></a>
+    <a href="sell.html" class="sell" aria-label="Sell"><span>+</span></a>
+    <a href="wishlist.html"><span>Cart</span></a>
+    <a href="login.html"><span>Account</span></a>
+  </nav>
+
+  <script src="js/data.js?v=4"></script>
+  <script src="js/whatsapp.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const id = new URLSearchParams(location.search).get("id");
-      const listing = id ? getListingById(id) : null;
-      const container = document.getElementById("product-content");
-      if (!listing) {
-        container.innerHTML = '<div class="empty-state"><h3>Product not found</h3><p>This listing may have been removed.</p><a href="marketplace.html" class="btn btn-primary mt-4">Back to marketplace</a></div>';
+  (function () {
+    function money(n) {
+      n = Number(n) || 0;
+      return "R" + n.toLocaleString("en-ZA");
+    }
+    function qs(name) {
+      var m = new URLSearchParams(location.search).get(name);
+      return m || "";
+    }
+    function esc(s) {
+      return String(s == null ? "" : s)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    async function load() {
+      var id = qs("id");
+      var root = document.getElementById("product-root");
+      var item = null;
+
+      // 1) Demo / local data
+      try {
+        if (typeof getListingById === "function") item = getListingById(id);
+        if (!item && window.LISTINGS) {
+          item = window.LISTINGS.find(function (l) { return l.id === id; });
+        }
+      } catch (e) {}
+
+      // 2) Supabase products (uuid ids)
+      if (!item && id && window.getSmClient) {
+        try {
+          var client = window.getSmClient();
+          if (client) {
+            var res = await client.from("products").select("*, profiles:seller_id(full_name, whatsapp, campus)").eq("id", id).maybeSingle();
+            if (res.data) {
+              var p = res.data;
+              item = {
+                id: p.id,
+                title: p.name,
+                description: p.description,
+                price: p.selling_price,
+                originalPrice: p.original_price,
+                campus: p.location || (p.profiles && p.profiles.campus),
+                sellerName: p.profiles && p.profiles.full_name,
+                whatsapp: p.profiles && p.profiles.whatsapp,
+                images: [],
+                status: p.status,
+                stockStatus: p.stock_status,
+                prepDays: p.prep_days,
+                deliveryDays: p.delivery_days,
+                collection: p.collection_available,
+                delivery: p.delivery_available,
+                condition: p.condition
+              };
+              var imgs = await client.from("product_images").select("url").eq("product_id", id).order("sort_order");
+              if (imgs.data) item.images = imgs.data.map(function (r) { return r.url; });
+            }
+          }
+        } catch (e) { console.warn(e); }
+      }
+
+      if (!item) {
+        root.innerHTML = '<a class="pd-back" href="marketplace.html">← Back</a><p>Product not found.</p>';
         return;
       }
-      document.title = listing.title + " | Student Marketplace";
-      const cat = getCategoryById(listing.category);
-      const condition = getConditionLabel(listing.condition);
-      const waLink = buildWhatsAppLink(listing.whatsapp, "Hi, I’m interested in: " + listing.title);
-      container.innerHTML = `
-        <div class="product-detail">
-          <div class="product-gallery"><img src="${listing.images[0]}" alt="${escapeHtml(listing.title)}" data-fallback="https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=600&q=60"></div>
-          <div class="product-info">
-            <div class="product-card-meta" style="margin-bottom:0.5rem;"><span class="badge badge-condition">${escapeHtml(condition)}</span><span class="badge badge-featured">${escapeHtml(cat.name)}</span></div>
-            <h1>${escapeHtml(listing.title)}</h1>
-            <div class="product-price">${formatPrice(listing.price)}</div>
-            <p style="color:var(--color-text-secondary);margin-bottom:1rem;">${escapeHtml(listing.description)}</p>
-            <p style="font-size:0.875rem;color:var(--color-text-muted);">Posted ${formatDate(listing.datePosted)} · ${escapeHtml(listing.campus)}</p>
-            <div class="seller-card">
-              <h3 style="font-size:1rem;margin-bottom:0.5rem;">Seller (demo)</h3>
-              <p style="font-weight:600;">${escapeHtml(listing.sellerName)}</p>
-              <p style="font-size:0.875rem;color:var(--color-text-secondary);margin-bottom:1rem;">${escapeHtml(listing.campus)} · Demo vendor</p>
-              <a href="${waLink}" target="_blank" rel="noopener" class="btn btn-whatsapp btn-block">Contact via WhatsApp (demo)</a>
-              <p style="font-size:0.75rem;color:var(--color-text-muted);margin-top:0.5rem;">Fictional demo number. Real contact after Phase 2 verification.</p>
-            </div>
-            <div class="safety-note"><strong>Safety reminder:</strong> Meet in a public campus area, inspect before paying, never share OTPs. See <a href="safety.html">Safety tips</a>.</div>
-            <p style="margin-top:1.5rem;"><a href="marketplace.html" class="btn btn-outline">← Back to marketplace</a></p>
-          </div>
-        </div>`;
-    });
+
+      var price = Number(item.price) || 0;
+      var orig = Number(item.originalPrice) || 0;
+      var pct = orig > price ? Math.round((1 - price / orig) * 100) : 0;
+      var img = (item.images && item.images[0]) || item.image || "";
+      var phone = item.whatsapp || (item.seller && item.seller.whatsapp) || "";
+      // Demo listings may use fictional numbers — only enable WA if valid format present
+      var link = "";
+      var msg = window.SMWhatsApp.productMessage({
+        name: item.title || item.name,
+        price: price,
+        campus: item.campus || item.location || "TUT",
+        link: location.href
+      });
+      if (window.SMWhatsApp.isValidWa(phone)) {
+        link = window.SMWhatsApp.buildLink(phone, msg);
+      }
+
+      var avail = [];
+      if (item.stockStatus) avail.push("Stock: " + item.stockStatus);
+      if (item.prepDays != null) avail.push("Preparation: " + item.prepDays + " day(s)");
+      if (item.deliveryDays != null) avail.push("Delivery estimate: " + item.deliveryDays + " day(s)");
+      if (item.collection) avail.push("Collection available");
+      if (item.delivery) avail.push("Delivery available");
+
+      root.innerHTML =
+        '<a class="pd-back" href="marketplace.html">← Back to marketplace</a>' +
+        (img ? '<img class="pd-img" src="' + esc(img) + '" alt="">' : '<div class="pd-img"></div>') +
+        '<h1 class="pd-title">' + esc(item.title || item.name) +
+          (pct ? '<span class="pd-disc">-' + pct + '%</span>' : '') + '</h1>' +
+        '<div><span class="pd-price">' + money(price) + '</span>' +
+          (pct ? '<span class="pd-old">' + money(orig) + '</span>' : '') + '</div>' +
+        '<div class="pd-meta">' + esc(item.sellerName || (item.seller && item.seller.name) || "Student seller") +
+          " · " + esc(item.campus || item.location || "TUT") + '</div>' +
+        '<div class="pd-desc">' + esc(item.description || "No description provided.") + '</div>' +
+        (avail.length ? '<div class="pd-box"><h3>Availability & delivery</h3><p>' + avail.map(esc).join("</p><p>") + '</p>' +
+          '<p style="font-size:0.8rem;color:#6B6575">Estimates only — confirm with the seller on WhatsApp.</p></div>' : '') +
+        '<div class="pd-box"><h3>Seller</h3><p>' + esc(item.sellerName || "Student seller") + '</p>' +
+          '<p>' + esc(item.campus || "TUT") + '</p></div>' +
+        (link
+          ? '<a class="pd-wa" href="' + link + '" target="_blank" rel="noopener">Order via WhatsApp</a>'
+          : '<div class="pd-wa disabled">WhatsApp unavailable</div>') +
+        '<p class="pd-note">Phase 1: ordering is arranged on WhatsApp. Student Marketplace does not process payments. Agree price, collection or delivery directly with the seller.</p>';
+    }
+
+    load();
+  })();
   </script>
 </body>
 </html>

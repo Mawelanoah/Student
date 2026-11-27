@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My products | Seller</title>
+  <meta name="theme-color" content="#5420A8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/brand.css">
+</head>
+<body>
+  <header class="site-header"><div class="container header-inner">
+    <a href="dashboard.html" class="logo"><span class="logo-icon">SM</span><span>Seller</span></a>
+    <a href="add-product.html" class="btn btn-primary btn-sm">Add product</a>
+  </div></header>
+  <main class="section"><div class="container">
+    <h1 class="section-title">My products</h1>
+    <div id="list">Loading…</div>
+  </div></main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/session.js"></script>
+  <script>
+  (async function () {
+    var session = await window.smRequireRole(["seller", "admin"], "login.html");
+    if (!session) return;
+    var client = window.smGetClient();
+    var res = await client.from("products").select("id,name,selling_price,status,location,created_at").eq("seller_id", session.user.id).order("created_at", { ascending: false });
+    var list = document.getElementById("list");
+    if (res.error) {
+      list.innerHTML = "<p style='color:#DC2626'>" + res.error.message + "</p>";
+      return;
+    }
+    if (!res.data.length) {
+      list.innerHTML = '<p>No products yet. <a href="add-product.html">Add your first product</a></p>';
+      return;
+    }
+    list.innerHTML = res.data.map(function (p) {
+      return '<div style="border:1px solid var(--color-border);border-radius:12px;padding:1rem;margin-bottom:0.75rem;background:#fff">' +
+        '<strong>' + (p.name || '') + '</strong> · R' + p.selling_price + ' · ' + (p.status || '') +
+        '<div style="font-size:0.8rem;color:var(--color-text-secondary)">' + (p.location || '') + '</div>' +
+        '<a href="../product.html?id=' + p.id + '">View</a></div>';
+    }).join("");
+  })();
+  </script>
+</body>
+</html>

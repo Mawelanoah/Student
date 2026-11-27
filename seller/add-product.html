@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#5420A8">
+  <title>Add product | Seller</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/brand.css">
+</head>
+<body>
+  <header class="site-header"><div class="container header-inner">
+    <a href="dashboard.html" class="logo"><span class="logo-icon">SM</span><span>Seller</span></a>
+    <a href="dashboard.html" class="btn btn-ghost btn-sm">Dashboard</a>
+  </div></header>
+  <main class="section"><div class="container" style="max-width:520px">
+    <h1 class="section-title">Add product</h1>
+    <p class="section-subtitle">Only approved sellers. Listings go live when status is active.</p>
+    <div id="auth-message" style="display:none"></div>
+    <form id="form">
+      <div class="form-group"><label class="form-label">Product name *</label><input class="form-input" name="name" required maxlength="120"></div>
+      <div class="form-group"><label class="form-label">Description *</label><textarea class="form-textarea" name="description" required rows="4"></textarea></div>
+      <div class="form-group"><label class="form-label">Selling price (R) *</label><input class="form-input" name="selling_price" type="number" min="1" step="1" required></div>
+      <div class="form-group"><label class="form-label">Original price (optional)</label><input class="form-input" name="original_price" type="number" min="1" step="1"></div>
+      <div class="form-group"><label class="form-label">Condition</label>
+        <select class="form-select" name="condition"><option value="used">Used</option><option value="new">New</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Stock status</label>
+        <select class="form-select" name="stock_status">
+          <option value="in_stock">In stock</option>
+          <option value="limited">Limited stock</option>
+          <option value="made_to_order">Made to order</option>
+          <option value="unavailable">Temporarily unavailable</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Preparation days</label>
+        <input class="form-input" name="prep_days" type="number" min="0" max="90" value="0">
+      </div>
+      <div class="form-group"><label class="form-label">Delivery days (estimate)</label>
+        <input class="form-input" name="delivery_days" type="number" min="0" max="90" value="0">
+      </div>
+      <div class="form-group"><label class="form-label"><input type="checkbox" name="collection_available" checked> Collection available</label></div>
+      <div class="form-group"><label class="form-label"><input type="checkbox" name="delivery_available"> Delivery available</label></div>
+      <div class="form-group"><label class="form-label">Campus / location *</label>
+        <select class="form-select" name="location" required>
+          <option value="">Select</option>
+          <option>Pretoria Campus</option>
+          <option>Soshanguve Campus</option>
+          <option>Ga-Rankuwa Campus</option>
+          <option>eMalahleni Campus</option>
+          <option>Mbombela Campus</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Image URL (temporary)</label>
+        <input class="form-input" name="image_url" type="url" placeholder="https://…">
+        <small style="color:var(--color-text-muted)">Storage upload can be added next. Paste a public image URL for now.</small>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg">Publish product</button>
+    </form>
+  </div></main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/session.js"></script>
+  <script>
+  (async function () {
+    var session = await window.smRequireRole(["seller", "admin"], "login.html");
+    if (!session) return;
+    var client = window.smGetClient();
+    var form = document.getElementById("form");
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      var btn = form.querySelector('[type=submit]');
+      btn.disabled = true;
+      try {
+        var fd = new FormData(form);
+        var row = {
+          seller_id: session.user.id,
+          name: String(fd.get("name")).trim(),
+          description: String(fd.get("description")).trim(),
+          selling_price: Number(fd.get("selling_price")),
+          original_price: fd.get("original_price") ? Number(fd.get("original_price")) : null,
+          condition: fd.get("condition"),
+          stock_status: fd.get("stock_status"),
+          prep_days: Number(fd.get("prep_days") || 0),
+          delivery_days: Number(fd.get("delivery_days") || 0),
+          collection_available: !!form.collection_available.checked,
+          delivery_available: !!form.delivery_available.checked,
+          location: fd.get("location"),
+          status: "active",
+          stock_qty: 1
+        };
+        var ins = await client.from("products").insert(row).select("id").single();
+        if (ins.error) throw ins.error;
+        var url = String(fd.get("image_url") || "").trim();
+        if (url && ins.data && ins.data.id) {
+          await client.from("product_images").insert({ product_id: ins.data.id, url: url, sort_order: 0 });
+        }
+        window.smShowMsg("Product published.", false);
+        setTimeout(function () { location.href = "products.html"; }, 900);
+      } catch (err) {
+        window.smShowMsg((err && err.message) || "Could not save. Run phase1-listings.sql if columns/policies are missing.", true);
+        btn.disabled = false;
+      }
+    });
+  })();
+  </script>
+</body>
+</html>
